@@ -1,0 +1,59 @@
+@inherits KudoCode.Web.Infrastructure.Blazor.Infrastructure.KudoCodeUiComponent
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components
+@typeparam TItem
+
+@if (@RenderType.Equals("header"))
+{
+    <th scope="col">
+        @Title
+    </th>
+}
+else if (@RenderType.Equals("row"))
+{
+    if (RowTemplate != null)
+    {
+        <td>
+            @RowTemplate(Item)
+        </td>
+    }
+    else
+    {
+        <td>
+            @Item.GetType().GetProperty(Property).GetValue(Item, null)
+        </td>
+    }
+}
+
+else if (@RenderType.Equals("footer"))
+{
+    if (FooterTemplate != null)
+    {
+        @FooterTemplate(Item)
+    }
+}
+
+@functions {
+
+    [CascadingParameter(Name = "RenderType")]
+    public string RenderType { get; set; }
+
+    [CascadingParameter(Name = "Item")]
+    public TItem Item { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Property { get; set; }
+
+    [Parameter]
+    public  RenderFragment<TItem> RowTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> FooterTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

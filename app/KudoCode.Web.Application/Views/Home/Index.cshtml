@@ -1,0 +1,47 @@
+﻿@using Newtonsoft.Json
+@model object
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "_Login";
+}
+
+<div autoui-command="type:Start" id="Login">
+    <div class="container" id="koContainer" style="max-width: 350px; display: none;" data-bind="visible: true">
+        <h4>Login</h4>
+
+        <partial name="errorMessages"/>
+
+        <hr/>
+        <div class="form-group">
+            <label for="email" class="col-sm-3 ">Email</label>
+            <div class="col-sm-9">
+                <input data-bind="value: Result.Email" type="email" id="email" placeholder="Email" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="col-sm-3 ">Password</label>
+            <div class="col-sm-9">
+                <input data-bind="value: Result.Password" type="password" id="password" placeholder="Password" class="form-control">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-9 col-sm-offset-3">
+                <button data-bind="click: function(){AppUserServ.Login()}" class="btn btn-primary btn-block" id="LoginBtn">login</button>
+            </div>
+        </div>
+    </div> <!-- ./container -->
+</div>
+
+@section scripts
+{
+    <script>
+        var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+        require(['viewModel', 'Services/ApplicationUserService'],
+            function(vm, _appUserServ) {
+                viewModel = vm.Init(model, "koContainer", "Home");
+                AppUserServ = _appUserServ;
+            });
+    </script>
+}
+
+;

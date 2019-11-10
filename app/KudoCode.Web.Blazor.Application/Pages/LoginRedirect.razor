@@ -1,0 +1,65 @@
+﻿@page "/LoginRedirect"
+@using KudoCode.LogicLayer.Infrastructure.Dtos.Tokens
+@using KudoCode.Web.Blazor.Application.ViewModels
+@using KudoCode.Web.Infrastructure.Domain
+@using KudoCode.Web.Infrastructure.Domain.Execution
+@using SharedComponents
+@inject WebHandlerController WebHandlerController
+
+@inherits KudoCodePageComponent
+
+<div id="Login">
+	<div class="container" id="koContainer" style="max-width: 350px;">
+		<h4>Login</h4>
+		<hr />
+		<MessagesComponent Messages="@_viewModel.Messages" />
+
+		<div class="form-group">
+			<label for="email" class="col-sm-3 ">Email</label>
+			<div class="col-sm-9">
+				<input bind="@_viewModel.Result.Email" type="email" placeholder="Email" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="password" class="col-sm-3 ">Password</label>
+			<div class="col-sm-9">
+				<input bind="@_viewModel.Result.Password" type="password" placeholder="Password" class="form-control" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-9 col-sm-offset-3">
+				<button onclick="LoginAction" class="btn btn-primary btn-block" id="LoginBtn">login</button>
+			</div>
+		</div>
+	</div> <!-- ./container -->
+</div>
+
+@functions
+{
+	private WebResponseDto<GetLoginViewModel> _viewModel = new WebResponseDto<GetLoginViewModel>();
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		await Task.Run(() =>
+			{
+				_viewModel = new WebResponseDto<GetLoginViewModel>();
+				_viewModel.Result.Email = "testB@testC.com";
+				_viewModel.Result.Password = "1234";
+			});
+
+	}
+
+	private void LoginAction()
+	{
+		WebHandlerController.Create<GetTokenRequest, int>()
+			.SetOnSuccess((rsp) => { Navigation.GoTo("/Dashboard"); })
+			.SetOnFail((rsp) => { ToastMessage(rsp.Messages.ToArray()); })
+			.Execute(new GetTokenRequest
+			{
+				Email = _viewModel.Result.Email,
+				Password = _viewModel.Result.Password,
+			});
+	}
+
+}

@@ -1,0 +1,96 @@
+﻿@page "/"
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components
+@inherits KudoCodePageComponent
+
+@{
+    var colLabelText = new int[] {3, 9};
+}
+<div class="card">
+    <div class="card-header">
+        This is the header content
+    </div>
+
+    <div class="card-bofy">
+        <div class="card-text">
+
+            This is some body text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </div>
+        <div class="card-text">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        Empty Space
+
+                        <KudoCodeButton Id="testButton" Value="Test Button" Click="@(() => { GoTo(); })"/>
+
+                    </div>
+                    <div class="col">
+
+                        <KudoCodeTextBox
+                            Id="PriceDecimal"
+                            Title="Price:"
+                            ColSize="@colLabelText"
+                            Value="@Price"
+                            Type="decimal"
+                            OnChange="@(x => @Price = x)"/>
+
+                        <KudoCodeTextBox
+                            Id="PriceCurrency"
+                            Title="Price:"
+                            ColSize="@colLabelText"
+                            Value="@Price"
+                            Type="currency"
+                            OnChange="@(x => @Price = x)"/>
+
+
+                        <KudoCodeTextBox
+                            ReadOnly="@ReadOnly"
+                            Title="Name:"
+                            ColSize="@colLabelText"
+                            OnChange="@(() => { })"
+                            Value="Test Value"
+                            Id="NameInput"/>
+                        <KudoCodeDate
+                            ReadOnly="@ReadOnly"
+                            ColSize="@colLabelText"
+                            Title="Open Date:"
+                            Format="yyyy-MM-dd"
+                            SelectedDate="@DateTime.Now"
+                            Id="OpenDate"
+                            OnChange="@(() => { })"/>
+                        <KudoCodeButton Id="testButton" ColSize="@(new int[] {1, 11})" Value="Test Button" Click="@(() => { Action(); })"/>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="card-footer">
+        This is the footer content
+    </div>
+
+</div>
+
+@functions
+{
+    bool ReadOnly = false;
+    string Price = "10.01";
+
+    void Action()
+    {
+        ReadOnly = !ReadOnly;
+    }
+
+    void Action(ChangeEventArgs args)
+    {
+    }
+
+    void GoTo()
+    {
+        Navigation.GoTo("portfolio-getList");
+    }
+
+}

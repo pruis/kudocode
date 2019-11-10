@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RootNamespace>Core.Services.Workflow.RabbitMQ</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Topshelf" Version="4.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Helpers\KudoCode.Helpers.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Dtos\KudoCode.LogicLayer.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Infrastructure.Dtos\KudoCode.LogicLayer.Infrastructure.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.EntityAudit.Dtos\KudoCode.LogicLayer.Plugin.EntityAudit.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.Messaging.Infrastructure\KudoCode.Messaging.Infrastructure.csproj" />
+    <ProjectReference Include="..\KudoCode.Messaging.RabbitMQ\KudoCode.Messaging.RabbitMQ.csproj" />
+    <ProjectReference Include="..\KudoCode.Web.Api.Connector\KudoCode.Web.Api.Connector.csproj" />
+  </ItemGroup>
+
+</Project>

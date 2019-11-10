@@ -1,0 +1,46 @@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using System
+@using System.Globalization
+
+@inherits KudoCode.Web.Infrastructure.Blazor.Infrastructure.KudoCodeUiComponent
+
+<div class="row">
+    <div class="@ColClass(0) col-sm-offset-3 ">
+        <div class="">@Title</div>
+    </div>
+    <div class="@ColClass(1) col-sm-offset-3">
+        <input
+            type="date"
+            disabled='@ReadOnly'
+            placeholder="@Title"
+            class="form-control datetimepicker-input textbox"
+            @onchange="@Change"
+            value="@Value"
+            id="@Id"/>
+    </div>
+</div>
+
+@functions
+{
+
+    [Parameter]
+    public EventCallback
+        <string> OnChange { get; set; }
+
+    [Parameter]
+    public string Format { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    async void Change(ChangeEventArgs e)
+    {
+        Value = e.Value.ToString();
+        OnChange.InvokeAsync(Value).Wait();
+    }
+
+}

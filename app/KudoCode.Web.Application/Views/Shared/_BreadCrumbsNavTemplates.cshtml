@@ -1,0 +1,12 @@
+﻿<div type="text/html" id="BreadCrumbsNavTemplate">
+
+    <nav>
+        <ol class="breadcrumb">
+            <!-- ko foreach: $root -->
+            <li class="breadcrumb-item">
+                <a data-bind="text: title, click: function(){ nav.GoTo(title(),uri()) }, attr: { href: '#', title:title }"></a>
+            </li>
+            <!-- /ko -->
+        </ol>
+    </nav>
+</div>

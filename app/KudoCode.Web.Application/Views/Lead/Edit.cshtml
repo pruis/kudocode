@@ -1,0 +1,195 @@
+﻿@using Newtonsoft.Json
+@model object
+
+<!DOCTYPE html>
+
+<head>
+    <title>Edit Lead</title>
+</head>
+<body>
+
+<div id="Lead" class="testBorder">
+
+    <div id="koContainer" class="testBorder" style="display: none;" data-bind="visible: true">
+
+        <partial name="successMessages"/>
+        <partial name="errorMessages"/>
+
+        <div class="row testBorder">
+            <hr/>
+            <div class="col-5 float-left testBorder">
+                <h4>Lead Information</h4>
+            </div>
+            <div class="col-7 float-left testBorder">
+                <h4>Appointment Schedules</h4>
+            </div>
+            <hr/>
+        </div>
+
+        <div class="row testBorder">
+
+            <div class="col-5 testBorder">
+                <div class="row testBorder">
+                    <div class="col-4">
+                        <label>First Name:</label>
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control" data-bind="value: Result.FirstName" id="FirstName" type="text"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label>Surname:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" data-bind="value: Result.Surname" id="Surname" type="text"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label>Age:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" data-bind="value: Result.Age" id="Age" type="number" min="18" max="100"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label>Email:</label>
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control" data-bind="value: Result.Email" id="Email" type="email" required/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Gender:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <select id="Genders" autoui-command="type:SetPageElements" autoui-data="setAction:SetSelect"
+                                class="form-control" data-bind="options: Result.Genders,
+                       optionsText: 'Description',
+					   optionsValue: 'Key',
+                       value: Result.GenderId,
+                       optionsCaption: 'Choose...'">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Current Advisor:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <select id="CurrentAdvisors" autoui-command="type:SetPageElements" autoui-data="setAction:SetSelect"
+                                class="form-control" data-bind="options: Result.CurrentAdvisors,
+                       optionsText: 'Description',
+					   optionsValue: 'Key',
+                       value: Result.CurrentAdvisorId,
+                       optionsCaption: 'Choose...'">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Occupation:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <select id="Occupations" autoui-command="type:SetPageElements" autoui-data="setAction:SetSelect"
+                                class="form-control" data-bind="options: Result.Occupations,
+                       optionsText: 'Description',
+					   optionsValue: 'Key',
+                       value: Result.OccupationId,
+                       optionsCaption: 'Choose...'">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Cellnumber:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" data-bind="value: Result.Cellphone" id="Cellphone" type="text" pattern="[0][0-9]{9}" oninvalid="this.setCustomValidity('10 diget number starting with 0')" oninput="this.setCustomValidity('')"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <label>Land line:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input class="form-control" data-bind="value: Result.Landline" type="text" id="Landline" pattern="[0][0-9]{9}" oninvalid="this.setCustomValidity('10 diget number starting with 0')" oninput="this.setCustomValidity('')"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 ">
+                        <label>Free Will:</label>
+                    </div>
+                    <div class="col-lg-6">
+                        <input autoui-command="type:SetPageElements" autoui-data="setAction:Check" class="form-control" data-bind="Check: Result.FreeWill" id="FreeWill" type="checkbox"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-7 testBorder" data-bind="visible: Result.Id() === 0">
+
+                <span> Save lead to add Activities</span>
+            </div>
+
+            <div class="col-7 testBorder" data-bind="visible: Result.Id() > 0">
+                <div class="row">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr class="row">
+                            <th class="col-2">Type</th>
+                            <th class="col-3">Date</th>
+                            <th class="col-7">Address</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- ko foreach: Result.LeadScheduledActivities-->
+                        <tr class="row" data-bind="click:function(){ Lead.EditActivity(Id(),$parent.Result.Id())}">
+                            <td class="col-2" data-bind="text: LeadScheduledActivityType.Description"></td>
+                            <td class="col-3" data-bind="text: AppointmentDateTime"></td>
+                            <td class="col-7" data-bind="text: Address.GetAddressDescription"></td>
+                        </tr>
+                        <!-- /ko -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row float-right">
+                    <input id="NewActivityBtn"
+                           data-bind="click:function(){viewModel.GoTo('Activity','/LeadScheduledActivity/Edit/0/' + Result.Id())}"
+                           class="btn btn-sm btn-success" type="button" value="new activity"/>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-8">
+            </div>
+            <div class="col-2">
+                <input id="BackBtn" data-bind="click: function(){$root.Back()}" class="form-control btn btn-sm btn-secondary" value="Back"/>
+            </div>
+            <div class="col-2">
+                <input class="form-control btn btn-sm btn-primary" value="Save" data-bind="click:  function(){ Lead.Save() };"/>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+@section scripts
+{
+    <script>
+    
+	var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+    var viewModel;
+    var Lead;
+		
+		require(['viewModel', 'Services/LeadService'], function (vm, _lead) {
+			viewModel = vm.Init(model, "koContainer", "Lead");
+				Lead = _lead
+			});
+	</script>
+}

@@ -1,0 +1,48 @@
+@using KudoCode.LogicLayer.Infrastructure.Dtos.Messages
+@using Microsoft.AspNetCore.Components
+@namespace SharedComponents
+
+@if (Messages.Any(a => a.Type == MessageDtoType.Error))
+{
+    <div class="alert alert-danger" role="alert">
+        @foreach (var x in Messages.Where(a => a.Type == MessageDtoType.Error))
+        {
+            <div class="row">
+                <div class="col-1">@x.Key</div>
+                <div class="col-11">@x.Message</div>
+            </div>
+        }
+    </div>
+}
+@if (Messages.Any(a => a.Type == MessageDtoType.Success))
+{
+    <div class="alert alert-success" role="alert">
+        @foreach (var x in Messages.Where(a => a.Type == MessageDtoType.Success))
+        {
+            <div class="row">
+                <div class="col-1">@x.Key</div>
+                <div class="col-11">@x.Message</div>
+            </div>
+        }
+    </div>
+}
+@if (Messages.Any(a => a.Type == MessageDtoType.Warning))
+{
+    <div class="alert alert-warning" role="alert">
+        @foreach (var x in Messages.Where(a => a.Type == MessageDtoType.Warning))
+        {
+            <div class="row">
+                <div class="col-1">@x.Key</div>
+                <div class="col-11">@x.Message</div>
+            </div>
+        }
+    </div>
+}
+
+@functions
+{
+
+    [Parameter]
+    public List<MessageDto> Messages { get; set; }
+
+}

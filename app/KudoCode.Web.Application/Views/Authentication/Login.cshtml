@@ -1,0 +1,39 @@
+﻿@using Newtonsoft.Json
+@model object
+
+@{
+	ViewBag.Title = "title";
+	Layout = "_Layout";
+}
+
+<div class="container" id ="XkoContainer" style="max-width: 350px">
+	<form class="form-horizontal" role="form">
+		<h2>Login</h2>
+		<div class="form-group">
+			<label for="email" class="col-sm-3 control-label">Email</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Email" type="email" id="email" placeholder="Email" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="password" class="col-sm-3 control-label">Password</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Password" type="password" id="password" placeholder="Password" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-9 col-sm-offset-3">
+				<button data-bind="click:function(){ $root.Post('LoginAction')}" type="submit" class="btn btn-primary btn-block">login</button>
+			</div>
+		</div>
+	</form> <!-- /form -->
+</div> <!-- ./container -->
+
+
+<script>
+	var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+	viewModel = new ModelClass().Init(model, "koContainer","Authentication");
+</script>
+
+
+

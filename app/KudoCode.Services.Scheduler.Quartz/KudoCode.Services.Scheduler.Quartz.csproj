@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="4.9.4" />
+      <PackageReference Include="Autofac.Extras.Quartz" Version="4.6.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0" />
+      <PackageReference Include="Topshelf" Version="4.2.1" />
+      <PackageReference Include="Topshelf.Autofac.Standard" Version="1.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.AspNetCore.Hosting, Version=2.2.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.hosting\2.2.0\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KudoCode.Web.Api.Connector\KudoCode.Web.Api.Connector.csproj" />
+    </ItemGroup>
+
+</Project>
