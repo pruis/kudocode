@@ -1,0 +1,68 @@
+﻿@using Newtonsoft.Json
+@model object
+
+@{
+	ViewBag.Title = "title";
+	Layout = "_Layout";
+}
+
+<script src="~/Scripts/Services/ApplicationUserService.js"></script>
+
+<div class="container" id="koContainer">
+	<form onsubmit="return viewModel.User.Register()" id="Form" name="Form" class="form-horizontal" role="form">
+		<h2>Registration</h2>
+		<partial name="successMessages"/>
+		<partial name="errorMessages"/>
+
+		<div class="form-group">
+			<label for="firstName" class="col-sm-3 control-label">First Name</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Result.Name" type="text" id="firstName" placeholder="Full Name" class="form-control" autofocus>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="surname" class="col-sm-3 control-label">Surname</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Result.Surname" type="text" id="surname" placeholder="surname" class="form-control" autofocus>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="email" class="col-sm-3 control-label">Email</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Result.Email" type="email" id="email" placeholder="Email" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="password" class="col-sm-3 control-label">Password</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Result.Password" type="password" id="password" placeholder="Password" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="repassword" class="col-sm-3 control-label">Re-Password</label>
+			<div class="col-sm-9">
+				<input data-bind="value: Result.Repassword" type="password" id="repassword" placeholder="Re enter yout password" class="form-control">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-9 col-sm-offset-3">
+				<div class="checkbox">
+					<label>
+						<input type="checkbox">I accept <a href="#">terms</a>
+					</label>
+				</div>
+			</div>
+		</div> <!-- /.form-group -->
+		<div class="form-group">
+			<div class="col-sm-9 col-sm-offset-3">
+				<input class="form-control btn btn-sm btn-primary" value="Save" type="submit" />
+			</div>
+		</div>
+	</form> <!-- /form -->
+</div> <!-- ./container -->
+
+<script>
+	var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+	viewModel = new ModelClass()
+		.Init(model, "koContainer", "Lead", { ApplicationUserService });
+</script>

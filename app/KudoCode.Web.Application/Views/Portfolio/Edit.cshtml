@@ -1,0 +1,127 @@
+@using Newtonsoft.Json
+@model object
+
+<!DOCTYPE html>
+
+<head xmlns="http://www.w3.org/1999/html">
+    <title>Portfolio</title>
+</head>
+<body>
+
+<div id="Portfolio" class="testBorder">
+
+    <div id="koContainer" class="testBorder" style="display: none;" data-bind="visible: true">
+
+        <partial name="successMessages"/>
+        <partial name="errorMessages"/>
+
+        <div>
+            <h3 >Portfolio</h3>
+        </div>
+
+        <br>
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Name
+            </div>
+            <div class="col-2">
+                <input id="Name" class="form-control" data-bind="value:Result.Name"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Open Date:
+            </div>
+            <div class="col-2">
+                <input id="OpenDate" class="form-control" date-autoclose="true"
+                       data-bind=" event:{ valueUpdate: 'input'},  dateTimePicker: OpenDate , dateTimePickerOptions: { allowTime: false, inline: false, sideBySide: false }, value: Result.OpenDate"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-lg-2">
+                <input id="BackBtn" data-bind="click: function(){$root.Back()}"
+                       class="form-control btn btn-sm btn-secondary" value="Back"/>
+            </div>
+            <div class="col-lg-2">
+                <input class="form-control btn btn-sm btn-primary" value="Save" data-bind="click:  function(){ service.Save() };"/>
+            </div>
+        </div>
+
+        <br>
+        <h3 >Transactions</h3>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr class="row">
+                <th class="col">Date</th>
+                <th class="col">Type</th>
+                <th class="col">Description</th>
+                <th class="col">Quantity</th>
+                <th class="col">Price</th>
+                <th class="col">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- ko if: Result.Id() > 0-->
+            <!-- ko foreach: Result.Transactions-->
+            <tr class="row" data-bind="click:function(){ service.EditTransaction(PortfolioId(),Id()) }">
+                <td class="col" data-bind="text: Date()"></td>
+                <td class="col" data-bind="text:PortfolioTransactionType"></td>
+                <td class="col" data-bind="text:PortfolioShareDescription"></td>
+                <td class="col" data-bind="text: Quantity"></td>
+                <td class="col" data-bind="money: Price"></td>
+                <td class="col" data-bind="money: Total"></td>
+            </tr>
+            <!-- /ko -->
+            <!-- /ko -->
+            </tbody>
+        </table>
+
+        <br>
+        <div>
+            <h3 >Summaries</h3>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr class="row">
+                <th class="col">Open Date</th>
+                <th class="col">Open Amount</th>
+                <th class="col">Close Date</th>
+                <th class="col">Close Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- ko if: Result.Id() > 0-->
+            <!-- ko foreach: Result.TransactionsSummaries-->
+            <tr class="row" data-bind="click:function(){ service.EditSummary(Id()) }">
+                <td class="col" data-bind="text: OpenDate()"></td>
+                <td class="col" data-bind="money: OpenAmount"></td>
+                <td class="col" data-bind="text: CloseDate()"></td>
+                <td class="col" data-bind="money: CloseAmount"></td>
+            </tr>
+            <!-- /ko -->
+            <!-- /ko -->
+            </tbody>
+        </table>
+        <br>
+    </div>
+</div>
+</body>
+
+@section scripts
+{
+    <script>
+    var viewModel;
+    var service ;
+
+		var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+		
+		require(['viewModel','numeralMoneyBinding','bootstrapDatePicker','dateTimePickerBinding', 'Services/PortfolioService'], 
+		function (vm,numeral,bootstrapDatePicker,dateTimePickerBinding, _portfolio) {
+		    viewModel = vm.Init(model, "koContainer", "Portfolio");
+			service = _portfolio
+			});
+	</script>
+}

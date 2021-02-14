@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+   <TargetFramework>netcoreapp5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="5.2.0" />
+      <PackageReference Include="AutoMapper" Version="10.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KudoCode.LogicLayer.Infrastructure\KudoCode.LogicLayer.Infrastructure.csproj" />
+      <ProjectReference Include="..\KudoCode.Web.Infrastructure.Domain\KudoCode.Web.Infrastructure.Domain.csproj" />
+    </ItemGroup>
+
+</Project>

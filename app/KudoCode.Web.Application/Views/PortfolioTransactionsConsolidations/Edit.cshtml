@@ -1,0 +1,42 @@
+@using Newtonsoft.Json
+@model object
+
+<!DOCTYPE html>
+
+<head>
+    <title>Portfolio</title>
+</head>
+<body>
+
+<div id="PortfolioTransactionsConsolidation" class="testBorder">
+
+    <div id="koContainer" class="testBorder" style="display: none;" data-bind="visible: true">
+        <div id="page-content-wrapper">
+
+            <partial name="successMessages"/>
+            <partial name="errorMessages"/>
+
+            <div class="container">
+                <div data-bind="text:Result.Name"></div>
+            </div>
+
+        </div>
+        <div ></div>
+    </div>
+</div>
+</body>
+
+@section scripts
+{
+    <script>
+        var viewModel;
+        var service;
+
+		var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+		require(['viewModel', 'Services/PortfolioTransactionsConsolidationService'], function (vm, _PortfolioTransactionsConsolidation) {
+			    viewModel = vm.Init(model, "koContainer", "PortfolioTransactionsConsolidation");
+				service = _PortfolioTransactionsConsolidation
+			});
+
+	</script>
+}

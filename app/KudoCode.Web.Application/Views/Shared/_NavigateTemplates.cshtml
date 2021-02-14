@@ -1,0 +1,86 @@
+﻿<!-- ko if: AuthorizationRole.Name() === 'Administrator' -->
+<div type="text/html" id="AdministratorNavTemplate">
+	<nav id="AdministratorNavMainNav" autoui-data="type:model" class="navbar navbar-expand-lg navbar-light bg-light testBorder">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item dropdown">
+					<a autoui-command="type:GoTo, page:DashBoard" autoui-attrSelector="name:id" autoui-data="name:navbarDropdownLeadsBtn, group:Default, setAction:Click, isReadOnly:true" class="nav-link dropdown-toggle" href="#" id="navbarDropdownLeads" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Leads
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" autoui-command="type:GoTo, page:Lead" autoui-data="setAction:Click, isReadOnly:true" id="CreateLeadBtn" href="@Url.Action("Edit", "Lead", new {Id = 0})">Create</a>
+						<a data-bind="click: function(){nav.GoTo('Leads', '/Leads/Index')}" class="dropdown-item" id="SearchLeadsBtn" href="#">Leads</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" autoui-command="type:GoTo, page:Leads" autoui-data="setAction:Click, isReadOnly:true" id="RegisterBtn" href="@Url.Action("Register", "Authentication")">Register a user</a>
+					</div>
+				</li>
+			</ul>
+			<form class="form-inline my-2 my-lg-0">
+				<div class="form-control mr-sm-2" data-bind="text:AuthorizationRole.Name"></div>
+				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+			</form>
+		</div>
+
+	</nav>
+</div>
+<!-- /ko -->
+<!-- ko if: AuthorizationRole.Name() === 'Agent' -->
+<div type="text/html" id="AgentNavTemplate">
+	<nav id="AgentNavMainNav" autoui-data="type:model" class="navbar navbar-expand-lg navbar-light bg-light testBorder">
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item dropdown">
+
+				</li>
+			</ul>
+			<form class="form-inline my-2 my-lg-0">
+				<div class="form-control mr-sm-2" data-bind="text:AuthorizationRole.Name"></div>
+				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+			</form>
+		</div>
+	</nav>
+</div>
+<!-- /ko -->
+<!-- ko if: AuthorizationRole.Name() === 'Advisor' -->
+<div type="text/html" id="AdvisorNavTemplate">
+	<nav id="AdvisorNavMainNav" autoui-data="type:model" class="navbar navbar-expand-lg navbar-light bg-light testBorder">
+		<a class="navbar-brand" href="#">Navbar</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+				</li>
+				<li class="nav-item dropdown">
+
+				</li>
+			</ul>
+			<form class="form-inline my-2 my-lg-0">
+				<div class="form-control mr-sm-2" data-bind="text:AuthorizationRole.Name"></div>
+				<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+			</form>
+		</div>
+
+	</nav>
+</div>
+<!-- /ko -->

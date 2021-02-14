@@ -1,0 +1,60 @@
+﻿@using Newtonsoft.Json
+@model object
+<!DOCTYPE html>
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+<body class="testBorder" id="Leads">
+<div id="koContainer" style="display: none;" data-bind="visible: true">
+    <div id="page-content-wrapper">
+        <partial name="successMessages"/>
+        <partial name="errorMessages"/>
+        <br/>
+        <div class="row testBorder">
+            <div class="col-12">
+                <input id="SearchText" data-bind="value:Result.SearchText" type="text"/>
+                <input id="SearchBtn" data-bind="click: function(){Leads.Search()}" class="btn btn-sm btn-primary" type="button" value="Search"/>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr class="row">
+                    <th class="col-4">First Name</th>
+                    <th class="col-4">Surname</th>
+                    <th class="col-4">Email</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- ko foreach: Result.Leads-->
+                <tr class="row" data-bind=" click:function(){  viewModel.GoTo('Lead','/Lead/Edit/' + Id() )  }">
+                    <td class="col-4" data-bind="text: LeadPersonalInformation.FirstName"></td>
+                    <td class="col-4" data-bind="text: LeadPersonalInformation.Surname"></td>
+                    <td class="col-4" data-bind="text: LeadPersonalInformation.Email"></td>
+                </tr>
+                <!-- /ko -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+
+@section scripts
+{
+
+    <script>
+	var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+	var viewModel;
+	var Leads;
+		require(['bootstrap','viewModel', 'Services/LeadsService'],
+			function (bootstrap,vm, _leads) {
+				viewModel = vm.Init(model,"koContainer", "Leads");
+				Leads = _leads;
+			});
+
+	</script>
+
+}

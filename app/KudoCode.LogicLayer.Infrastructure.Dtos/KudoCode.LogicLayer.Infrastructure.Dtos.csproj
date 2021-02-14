@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl></RepositoryUrl>
+    <AssemblyName>KudoCode.LogicLayer.Infrastructure.Dtos</AssemblyName>
+    <RootNamespace>KudoCode.LogicLayer.Infrastructure.Dtos</RootNamespace>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>

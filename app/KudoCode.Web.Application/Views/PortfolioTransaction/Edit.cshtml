@@ -1,0 +1,119 @@
+@using Newtonsoft.Json
+@model object
+
+<!DOCTYPE html>
+
+<head>
+    <title>Portfolio</title>
+</head>
+<body>
+
+<div id="PortfolioTransaction" class="testBorder">
+
+    <div id="koContainer" class="testBorder" style="display: none;" data-bind="visible: true">
+
+
+        <partial name="successMessages"/>
+        <partial name="errorMessages"/>
+
+        <br>
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Transaction Date:
+            </div>
+            <div class="col-2">
+                <input id="Date" class="form-control" date-autoclose="true"
+                       data-bind=" event:{ valueUpdate: 'input'},  dateTimePicker: Date , 
+                            dateTimePickerOptions: { allowTime: false, inline: false, sideBySide: false }, value: Result.Date"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Quantity:
+            </div>
+            <div class="col-2">
+                <input id="Quantity" class="form-control" data-bind="value: Result.Quantity"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Price:
+            </div>
+            <div class="col-2">
+                <input id="Price" class="form-control" data-bind="value: Result.Price, moneyInput: Result.Price"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Total:
+            </div>
+            <div class="col-2">
+                <input id="Total" class="form-control" data-bind="value: Result.Total, moneyInput: Result.Total"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Share:
+            </div>
+            <div class="col-2">
+                <select id="PortfolioShare" class="form-control" data-bind="options: Result.PortfolioShare,
+                                   optionsText: 'Description',
+            					   optionsValue: 'Key',
+                                   value: Result.PortfolioShareId,
+                                   optionsCaption: 'Choose...'">
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Transaction Type:
+            </div>
+            <div class="col-2">
+                <select id="PortfolioTransactionType" class="form-control" data-bind="options: Result.PortfolioTransactionType,
+                                   optionsText: 'Description',
+            					   optionsValue: 'Key',
+                                   value: Result.PortfolioTransactionTypeId,
+                                   optionsCaption: 'Choose...'">
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-lg-2">
+                <input id="BackBtn" data-bind="click: function(){$root.Back()}"
+                       class="form-control btn btn-sm btn-secondary" value="Back"/>
+            </div>
+            <div class="col-lg-2">
+                <input class="form-control btn btn-sm btn-primary" value="Save" data-bind="click:  function(){ service.Save() };"/>
+            </div>
+        </div>
+    </div>
+
+    <div ></div>
+</div>
+</body>
+
+@section scripts
+{
+    <script>
+        var viewModel;
+        var service;
+
+			var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+    		require(['viewModel','numeralMoneyInputBinding','numeralMoneyBinding','bootstrapDatePicker','dateTimePickerBinding', 'Services/PortfolioTransactionService'], 
+    		function (vm,numeralInput,numeral,bootstrapDatePicker,  dateTimePicker, _portfolioTransaction) {
+    			    viewModel = vm.Init(model, "koContainer", "PortfolioTransaction");
+    				service = _portfolioTransaction
+    			});
+
+	</script>
+
+
+}

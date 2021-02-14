@@ -1,0 +1,73 @@
+parameters:
+  artifactDestination: ''
+jobs:
+  - job: publish_api
+    pool:
+        vmImage: 'windows-latest'
+    steps:
+        - task: UseDotNet@2
+          displayName: 'Use .NET Core sdk '
+          inputs:
+              useGlobalJson: true
+        - task: DotNetCoreCLI@2
+          displayName: Restore
+          enabled: true
+          inputs:
+              command: restore
+              projects: '**/*.csproj'
+        - task: DotNetCoreCLI@2
+          displayName: Build
+          enabled: true
+          inputs:
+              projects: '**/*.csproj'
+              arguments: '--configuration release'
+        - task: DotNetCoreCLI@2
+          displayName: Test
+          enabled: true
+          inputs:
+              command: test
+              projects: '**/*Test.Unit/*.csproj'
+              configuration: release
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet pack Dtos'
+          enabled: false
+          inputs:
+              command: pack
+              packagesToPack: '$(Build.Repository.LocalPath)\Tescodesign.LogicLayer.Dtos\TescoDesign.LogicLayer.Dtos.csproj'
+              nobuild: true
+              versioningScheme: byBuildNumber
+              configuration: release
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet pack Infrastructure Dtos'
+          enabled: false
+          inputs:
+              command: pack
+              packagesToPack: '$(Build.Repository.LocalPath)\Tescodesign.LogicLayer.Infrastructure.Dtos\TescoDesign.LogicLayer.Infrastructure.Dtos.csproj'
+              nobuild: true
+              versioningScheme: byBuildNumber
+              configuration: release
+        - task: DotNetCoreCLI@2
+          displayName: 'dotnet nuget artifact push'
+          enabled: false
+          inputs:
+              command: push
+              publishVstsFeed: 'd332014f-d6d9-44e3-afc2-571a95843c34'
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish API'
+          enabled: false
+          inputs:
+              command: publish
+              publishWebProjects: false
+              projects: 'Tescodesign.Web.Api\TescoDesign.Web.Api.csproj'
+              arguments: '--configuration release -r win-x86 --self-contained true --output "$(build.artifactstagingdirectory)"'
+              zipAfterPublish: True
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact'
+          enabled: true
+          inputs:
+              PathtoPublish: '$(build.artifactstagingdirectory)'
+              ArtifactName: '${{ parameters.artifactDestination }}'
+              publishLocation: 'Container'
+        - script:  'dir'
+          displayName: 'Command Line Script'
+

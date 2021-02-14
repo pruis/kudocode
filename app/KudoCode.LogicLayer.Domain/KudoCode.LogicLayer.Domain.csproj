@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="5.2.0" />
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
+    <PackageReference Include="FluentValidation" Version="9.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="SendGrid.Core" Version="2.0.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.LogicLayer.Dtos\KudoCode.LogicLayer.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Infrastructure.Domain\KudoCode.LogicLayer.Infrastructure.Domain.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Infrastructure.Dtos\KudoCode.LogicLayer.Infrastructure.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Infrastructure\KudoCode.LogicLayer.Infrastructure.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.EntityAudit.Domain\KudoCode.LogicLayer.Plugin.EntityAudit.Domain.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Domain\KudoCode.LogicLayer.Plugin.Redis.Domain.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Infrastructure\KudoCode.LogicLayer.Plugin.Redis.Infrastructure.csproj" />
+    <ProjectReference Include="..\KudoCode.Messaging.Infrastructure\KudoCode.Messaging.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Logic\FolderTemplate\AutoMapper" />
+    <Folder Include="Logic\FolderTemplate\Entities" />
+    <Folder Include="Logic\FolderTemplate\Handlers" />
+    <Folder Include="Logic\PortfolioAccounts\Entities" />
+  </ItemGroup>
+
+</Project>

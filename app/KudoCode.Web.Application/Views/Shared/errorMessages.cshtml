@@ -1,0 +1,10 @@
+﻿<div data-bind="if: (Errors().length > 0)">
+	<div class="alert alert-danger" role="alert">
+		<div data-bind="foreach:Errors">
+			<div class="row">
+				<div class="col-1" data-bind="text: Key"></div>
+				<div class="col-11" data-bind="text: Message"></div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,135 @@
+parameters:
+  templateArtifactLocation: ''
+  baseName: ''
+  connectedService: ''
+  environmentName: ''
+  location: ''
+  resourceGroupName: ''
+  subscriptionId: ''
+  performance: ''  
+  apiArtifactLocation: '' 
+
+jobs:
+   - deployment: deploy_to_environment
+     displayName: deploy to environment
+     pool:
+       vmImage: 'windows-latest' 
+     environment: '${{ parameters.environmentName }}'
+     strategy:
+       runOnce:
+         deploy:           
+           steps: 
+           - download: current
+             enabled: false
+             displayName: Download ARM Template artifacts
+             artifact: '${{ parameters.templateArtifactLocation }}'
+
+           - task: AzureCLI@1
+             enabled: false
+             displayName: "Create Resource Group in Azure"
+             inputs:
+               azureSubscription: '${{ parameters.connectedService }}'
+               scriptLocation: inlineScript
+               inlineScript: 'call powershell "if(-not (az group exists -n ${{ parameters.resourceGroupName }})){az group create --location ${{ parameters.location }} --name ${{ parameters.resourceGroupName }} }"'
+               useGlobalConfig: true
+
+           - task: AzureCLI@1
+             enabled: false
+             displayName: 'Give access to developers'
+             inputs:
+               azureSubscription: '${{ parameters.connectedService }}'
+               scriptLocation: inlineScript
+               inlineScript: 'az role assignment create --assignee-object-id ${{ parameters.developerSecurityGroupId }} --resource-group ${{ parameters.resourceGroupName }} --role Contributor'
+               useGlobalConfig: true
+
+           - powershell: '$buildAgentIP = Invoke-RestMethod https://api.ipify.org/?format=json | Select -exp ip; echo "##vso[task.setvariable variable=buildAgentIPAddress]$buildAgentIP"' 
+             enabled: true
+             displayName: "Retrieve Agent IP Address"
+
+
+           - bash: 'echo "Agent IP Address: $BUILDAGENTIPADDRESS"'
+             displayName: "Show Agent IP Address"
+
+
+           - task: AzureResourceManagerTemplateDeployment@3
+             enabled: false
+             name: 'DeployARMTemplates'
+             displayName: "Deploy ARM template resources"
+             inputs:
+               deploymentScope: 'Resource Group'
+               ConnectedServiceName: '${{ parameters.connectedService }}'
+               subscriptionName: '${{ parameters.subscriptionId }}'
+               action: 'Create Or Update Resource Group'
+               resourceGroupName: '${{ parameters.resourceGroupName }}'
+               location: '${{ parameters.location }}'
+               deploymentName: 'Automated'
+               templateLocation: 'Linked artifact'
+               csmFile: '$(Pipeline.Workspace)/${{ parameters.templateArtifactLocation }}/DeploymentTemplate.json'
+               overrideParameters: '-base "${{ parameters.baseName }}${{ parameters.environmentName }}" -location "${{ parameters.location }}" -performance "${{ parameters.performance }}" -authorityDomain "${{ parameters.authDomain }}" -authorityApiIdentifier "${{ parameters.authApiIdentifier }}" -accessGroupId "${{ parameters.developerSecurityGroupId }}" -orgName "${{ parameters.orgName }}" -adminEmail "${{ parameters.adminEmail }}" -agentIPAddress "$(buildAgentIPAddress)" -functionClientId "$(functionClientId)" -functionClientId "${{ parameters.functionClientId }}" -functionClientSecret "${{ parameters.functionClientSecret }}" -functionApiBaseUrl "${{ parameters.functionApiBaseUrl }}" -functionOcpKey "${{ parameters.functionOcpKey }}" -messagingApiID "${{ parameters.messagingApiID }}" -messagingClickatellBaseUrl "${{ parameters.messagingClickatellBaseUrl }}" -messagingWhatsAppUrl "${{ parameters.messagingWhatsAppUrl }}" -glasfitAuthorityDomain "${{ parameters.glasfitAuthorityDomain }}" -storageAccountConnectionString "${{ parameters.storageAccountConnectionString }}"'
+               deploymentMode: 'Incremental'
+
+
+           - task: ARM Outputs@5
+             enabled: false
+             name: 'OutVars'
+             displayName: "Export ARM output variables as Pipleine variables"
+             inputs:
+               ConnectedServiceNameARM: '${{ parameters.connectedService }}'
+               resourceGroupName: '${{ parameters.resourceGroupName }}'
+               prefix: 'out'
+               whenLastDeploymentIsFailed: 'fail' 
+
+
+           - download: current 
+             enabled: true
+             displayName: Download API artifacts
+             artifact: '${{ parameters.apiArtifactLocation }}'
+           
+           - script:  'cd $(Pipeline.Workspace)'
+             displayName: 'Command Line Script'
+
+           - script:  'dir'
+             displayName: 'Command Line Script'
+
+           - task: SetJsonProperty@1
+             enabled: false
+             displayName: Update appsettings.json - Set Application Insights ID
+             inputs:
+               JsonFile: '$(Pipeline.Workspace)/${{ parameters.apiArtifactLocation }}/PSL.Wrapper.Api/appsettings.json'
+               PropertyPath: 'ApplicationInsights.InstrumentationKey'
+               PropertyValue:  $(outapplicationInsightsId)
+
+
+           - task: SetJsonProperty@1
+             enabled: false
+             displayName: "Update appsettings.json - Set KeyVault Url"
+             inputs:
+               JsonFile: '$(Pipeline.Workspace)/${{ parameters.apiArtifactLocation }}/PSL.Wrapper.Api/appsettings.json'
+               PropertyPath: 'KeyVaultUrl'
+               PropertyValue: 'https://${{ parameters.baseName }}${{ parameters.environmentName}}keyv.vault.azure.net/' 
+
+
+           - task: AzureRmWebAppDeployment@4
+             enabled: true
+             displayName: "API - Deploy"
+             inputs:
+               ConnectionType: 'AzureRM'
+               azureSubscription: '${{ parameters.connectedService }}'
+               appType: 'apiApp'
+               WebAppName: '${{ parameters.baseName }}-${{ parameters.environmentName }}-app'
+               Package: '$(Pipeline.Workspace)/${{ parameters.apiArtifactLocation }}/Tescodesign.Web.Api.zip'
+
+           - task: apim@3
+             enabled: false
+             displayName: "Register API with Gateway"
+             inputs:
+               ConnectedServiceNameARM: '${{ parameters.connectedService }}'
+               ResourceGroupName: '${{ parameters.baseName }}${{ parameters.environmentName }}rg'
+               ApiPortalName: $(outapiPortalName)
+               UseProductCreatedByPreviousTask: 'false'
+               product: $(outunlimitedApiProductName)
+               swaggerlocation: '$(outapiUrl)/swagger/v1/swagger.json'
+               targetapi: '$(outapiName)'
+               DisplayName: 'PSL Wrapper API'
+               pathapi: '${{ parameters.environmentName }}'
+               MicrosoftApiManagementAPIVersion: '2017-03-01'

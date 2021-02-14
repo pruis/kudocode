@@ -1,0 +1,125 @@
+@using Newtonsoft.Json
+@model object
+
+<!DOCTYPE html>
+
+<head>
+    <title>Portfolio</title>
+</head>
+<body>
+
+<div id="Portfolio" class="testBorder">
+
+    <div id="koContainer" class="testBorder" style="display: none;" data-bind="visible: true">
+
+        <partial name="successMessages"/>
+        <partial name="errorMessages"/>
+
+        <div>
+            <h3 >Portfolio Summary</h3>
+        </div>
+
+        <br>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Open Date:
+            </div>
+            <div class="col-2">
+                <input id="OpenDate" class="form-control" date-autoclose="true"
+                       data-bind=" event:{ valueUpdate: 'input'},  dateTimePicker: OpenDate , dateTimePickerOptions: { allowTime: false, inline: false, sideBySide: false }, value: Result.OpenDate"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Open Amount:
+            </div>
+            <div class="col-2">
+                <input id="OpenAmount" class="form-control" data-bind="value: Result.OpenAmount, moneyInput: Result.OpenAmount"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Close Date:
+            </div>
+            <div class="col-2">
+                <input id="CloseDate" class="form-control" date-autoclose="true"
+                       data-bind=" event:{ valueUpdate: 'input'},  dateTimePicker: CloseDate , dateTimePickerOptions: { allowTime: false, inline: false, sideBySide: false }, value: Result.CloseDate"/>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Close Amount:
+            </div>
+            <div class="col-2">
+                <input id="CloseAmount" class="form-control" data-bind="value: Result.CloseAmount, moneyInput: Result.CloseAmount"/>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Interest Received:
+            </div>
+            <div class="col-2">
+                <input id="InterestReceived" class="form-control" data-bind="value: Result.InterestReceived, moneyInput: Result.InterestReceived"/>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Trustee Fees:
+            </div>
+            <div class="col-2">
+                <input id="TrusteeFees" class="form-control" data-bind="value: Result.TrusteeFees, moneyInput: Result.TrusteeFees"/>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-2 cellLabel">
+                Other Charges:
+            </div>
+            <div class="col-2">
+                <input id="OtherCharges" class="form-control" data-bind="value: Result.OtherCharges, moneyInput: Result.OtherCharges"/>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+            </div>
+            <div class="col-lg-2">
+                <input id="BackBtn" data-bind="click: function(){$root.Back()}"
+                       class="form-control btn btn-sm btn-secondary" value="Back"/>
+            </div>
+            <div class="col-lg-2">
+                <input class="form-control btn btn-sm btn-primary" value="Save" data-bind="click:  function(){ service.Save() };"/>
+            </div>
+        </div>
+
+        <br>
+    </div>
+</div>
+</body>
+
+@section scripts
+{
+    <script>
+        var viewModel;
+        var service;
+
+		var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+		require(['viewModel','numeralMoneyInputBinding','numeralMoneyBinding','bootstrapDatePicker','dateTimePickerBinding', 'Services/PortfolioTransactionsSummaryService'], 
+		function (vm,numeralInput,numeral,bootstrapDatePicker,dateTimePickerBinding,  _portfolioTransactionsSummary) {
+			    viewModel = vm.Init(model, "koContainer", "PortfolioTransactionsSummary");
+				service = _portfolioTransactionsSummary
+			});
+
+	</script>
+}

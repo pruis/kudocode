@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>kudocode.me</PackageProjectUrl>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.LogicLayer.Infrastructure.Dtos\KudoCode.LogicLayer.Infrastructure.Dtos.csproj" />
+  </ItemGroup>
+
+</Project>
