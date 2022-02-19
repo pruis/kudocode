@@ -1,0 +1,78 @@
+﻿@page "/dashboard"
+@using System.Diagnostics
+@using System.Linq.Expressions
+@using KudoCode.LogicLayer.Dtos.Portfolios.Outbound
+@using KudoCode.Web.Blazor.Application.ViewModels
+@using KudoCode.Contracts.Web
+@using KudoCode.Contracts.Web
+@using Microsoft.AspNetCore.Components
+@using SharedComponents
+@using KudoCode.LogicLayer.Dtos.Comanys.Outbound
+@using KudoCode.LogicLayer.Dtos.Companys.Outbound
+
+@inject NavigationManager UriHelper
+
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodePageComponent
+
+@{ var colLabelText = new int[] { 3, 9 }; }
+
+<div id="Dashboard">
+	<MessagesComponent Messages="@_viewModel.Messages" />
+
+	<div class="card">
+		<div class="card-header">
+			This is the header content
+		</div>
+
+		<div class="card-body">
+
+			<KudoCodeGenericTable TListRequest="ListCompanyRequest"
+								  TListResponse="ListCompanyResponse"
+								  TResponse="CompanyResponse"
+								  TGetRequest="GetCompanyRequest"
+								  TEditModel="GetCompanyResponse"
+								  TGetResponse="GetCompanyResponse"
+								  TSaveRequest="SaveCompanyRequest"
+								  TSaveResponse="SaveCompanyResponse"
+								  TDeleteRequest="DeleteCompanyRequest"
+								  TDeleteResponse="DeleteCompanyResponse"
+								  OnEditClickComplete="((ctx) =>{
+															 //StateHasChanged();
+														 })"
+								  //OnGetComplete ="GetLeadAction" />
+
+			<div class="card-text">
+				<KudoCodeDate ReadOnly=@Edit ColSize="@colLabelText" Title="Date Box" Format="@Configuration["DateFormat"]" SelectedDate="@Date" Id="testDate"
+							  @OnChange="(x => Date = x)" />
+				<KudoCodeButton Id="testButton" Value="Test Button" Click="(() => { Action(); })" />
+			</div>
+		</div>
+
+		<div class="card-footer">
+			This is the footer content
+		</div>
+	</div>
+</div>
+
+@functions
+{
+	DateTime Date = DateTime.Now;
+	bool Edit = true;
+
+	WebResponseDto<DashboardViewModel> _viewModel;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Run(() => { _viewModel = new WebResponseDto<DashboardViewModel>(); });
+	}
+
+	void Action()
+
+	{
+		Edit = !Edit;
+		var x = Date.ToString();
+
+		Navigation.GoTo("portfolio-getList");
+	}
+
+}

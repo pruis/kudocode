@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+   <TargetFramework>netcoreapp5.0</TargetFramework>
+    <RazorLangVersion>3.0</RazorLangVersion>
+	<Nullable>enable</Nullable>
+	<LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Abstract.Contracts.Shared\KudoCode.Abstract.Contracts.Shared.csproj" />
+    <ProjectReference Include="..\KudoCode.Web.Infrastructure.Domain\KudoCode.Web.Infrastructure.Domain.csproj" />
+    <ProjectReference Include="..\VxFormGenerator\VxFormGenerator.Components.Bootstrap\VxFormGenerator.Components.Bootstrap.csproj">
+      <Private></Private>
+    </ProjectReference>
+    <ProjectReference Include="..\VxFormGenerator\VxFormGenerator.Components.Plain\VxFormGenerator.Components.Plain.csproj" />
+    <ProjectReference Include="..\VxFormGenerator\VxFormGenerator.Core\VxFormGenerator.Core.csproj" />
+  </ItemGroup>
+
+</Project>

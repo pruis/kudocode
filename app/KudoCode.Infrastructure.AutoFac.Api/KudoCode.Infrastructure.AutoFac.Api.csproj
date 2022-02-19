@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Abstract.Application\KudoCode.Abstract.Application.csproj" />
+    <ProjectReference Include="..\KudoCode.Abstract.Persistence.EntityFramework\KudoCode.Abstract.Persistence.EntityFramework.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Domain\KudoCode.LogicLayer.Plugin.Redis.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

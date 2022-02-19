@@ -1,0 +1,136 @@
+﻿@page "/Test/{Request}/{Parameters}"
+
+@using VxFormGenerator.Core
+@using VxFormGenerator.Core.Layout
+@using KudoCode.Contracts
+@using Microsoft.AspNetCore.Components.Forms
+@using KudoCode.Abstract.Web.Blazor
+@using AutoMapper
+@using KudoCode.Abstract.Web.Blazor
+
+@inject KudoCode.Contracts.Web.ApiPostController ApiPostController;
+@inject IMapper Mapper;
+@inherits KudoCodePageComponent
+
+<EditForm Model="Model"
+		  OnValidSubmit="HandleValidSubmit"
+		  OnInvalidSubmit="HandleInValidSubmit">
+
+	<div class="row">
+		<div class="col">
+			<div class="row">
+				<div class="col-3">
+				</div>
+				<div class="col-3">
+					<KudoCodeButton value="delete" Class="btn btn-danger" Click="(() => {})" />
+				</div>
+				<div class="col-3">
+					<KudoCodeButton value="new" Class="btn-secondary" Click="(() => {Clear();})" />
+				</div>
+				<div class="col-3">
+					<button style="width: 100%" class="btn btn-primary check-circle " type="submit">save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br />
+	<div class="row">
+		<div class="col  text-right">
+			<VxFormGenerator.Core.Validation.ObjectGraphDataAnnotationsValidator />
+			<RenderFormElements FormLayoutOptions="@OptionsForForm"></RenderFormElements>
+		</div>
+	</div>
+
+
+</EditForm>
+<br />
+
+@typeparam TGetRequest
+@typeparam TGetResponse
+
+@typeparam TSaveRequest
+@typeparam TSaveResponse
+
+@typeparam TEditModel
+
+@code{
+	[Parameter] public TGetRequest Request { get; set; }
+	[Parameter] public string Service { get; set; } = "";
+	[Parameter] public object In { get; set; }
+	[Parameter] public object Out { get; set; }
+
+	[Parameter] public Action<object, object>? OnSaveComplete { get; set; }
+	[Parameter] public Action<TEditModel, IApiResponseContextDto<TGetResponse>>? OnGetComplete { get; set; }
+	[Parameter] public Action<TEditModel>? OnSaveClickStart { get; set; }
+	[Parameter] public Action? ClearSelected { get; set; }
+
+	private bool _firstRendered = false;
+
+	/// <summary>
+	/// Model that is used for the form
+	/// </summary>
+	///
+	[Parameter]
+	public TEditModel Model { get; set; }
+	private bool saveTriggered = false;
+
+	private VxFormLayoutOptionsAnnotated Options = new VxFormLayoutOptionsAnnotated();
+	private VxFormLayoutOptions OptionsForForm = new VxFormLayoutOptions();
+
+
+	public void Clear()
+	{
+		Model = Activator.CreateInstance<TEditModel>();
+		if (ClearSelected != null)
+			ClearSelected();
+	}
+
+
+		protected override Task OnInitializedAsync()
+		{
+			return base.OnInitializedAsync();
+		}
+
+		protected async override Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		_firstRendered = firstRender;
+	}
+
+	/// <summary>
+	/// Will handle the submit action of the form
+	/// </summary>
+	/// <param name="context">The model with values as entered in the form</param>
+	private async Task HandleValidSubmit(EditContext context)
+	{
+		if (OnSaveClickStart != null)
+			OnSaveClickStart(Model);
+
+		if (In != null)
+			Mapper.Map(In, Model);
+
+		//SAVE
+		await ApiPostController
+		.CreateAsync<TSaveRequest, TSaveResponse>()
+		.SetOnSuccess((rsp) =>
+		{
+			Mapper.Map(rsp.Result, Model);
+
+			if (OnSaveComplete != null)
+				OnSaveComplete(Model, rsp.Result);
+			Messages.Add(new MessageDto("", "Saved", MessageDtoType.Success));
+			Clear();
+
+		})
+		.SetOnComplete((rsp) =>
+		{
+			Messages.AddRange(rsp.Messages);
+		})
+		.PostAsync(Mapper.Map<TSaveRequest>(context.Model), Service);
+	}
+
+
+	private void HandleInValidSubmit(EditContext context)
+	{
+
+	} }

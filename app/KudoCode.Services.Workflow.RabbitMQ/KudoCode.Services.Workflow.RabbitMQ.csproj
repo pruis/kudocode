@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp6.0</TargetFramework>
+    <RootNamespace>Core.Services.Workflow.RabbitMQ</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="Topshelf" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Helpers\KudoCode.Helpers.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Dtos\KudoCode.LogicLayer.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.EntityAudit.Dtos\KudoCode.LogicLayer.Plugin.EntityAudit.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.Messaging.RabbitMQ\KudoCode.Messaging.RabbitMQ.csproj" />
+    <ProjectReference Include="..\KudoCode.Web.Api.Connector\KudoCode.Web.Api.Connector.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,110 @@
+﻿@page "/portfolio-get"
+@using global::AutoMapper
+@using Microsoft.AspNetCore.Components
+@using KudoCode.Web.Blazor.Application.ViewModels
+@using KudoCode.Contracts.Web
+@using KudoCode.Contracts
+@using KudoCode.LogicLayer.Dtos.PortfolioAccounts.OutBound
+@using KudoCode.LogicLayer.Dtos.Portfolios.Inbound
+@using KudoCode.LogicLayer.Dtos.Portfolios.Outbound
+@using KudoCode.Contracts.Web
+@using SharedComponents
+@inject WebHandlerController WebHandlerController
+@inject NavigationManager UriHelper
+@inject ApiPostController ApiPostController
+@inject IMapper Mapper
+
+@inherits KudoCodePageComponent
+
+@{
+	var colLabelText = new int[] { 3, 9 };
+	var Readonly = Id > 0;
+}
+
+<MessagesComponent Messages="@_viewModel.Messages" />
+<div class="card">
+	<div class="card-header" ElementType="ElementType.H4">
+		Portfolio: @_viewModel.Result.Name
+	</div>
+
+	<div class="card-body">
+		<div class="card-text">
+			<div class="row">
+				<div class="col-6">
+					<KudoCodeTextBox Id="NameInput"
+									 Title="Name:"
+									 ColSize="@colLabelText"
+									 Value="@_viewModel.Result.Name"
+									 @OnChange="(x => _viewModel.Result.Name = x)" />
+					<KudoCodeDate Id="OpenDate"
+								  ColSize="@colLabelText"
+								  Title="Open Date:"
+								  Format="@Configuration["DateFormat"]"
+								  SelectedDate="@_viewModel.Result.OpenDate"
+								  @OnChange="(x => _viewModel.Result.OpenDate = x)" />
+					<br />
+					<KudoCodeButton Id="testButton" Value="Save" Click="(() => { Save(); })" />
+				</div>
+				<div class="col-6">
+					<!-- empty half-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@if (Id > 0)
+{
+	<div class="card">
+		<div class="card-header" ElementType="ElementType.H4">
+			Accounts
+		</div>
+		<div class="card-body">
+			<div class="card-text">
+				<KudoCodeTable Items="@_viewModel.Result.Accounts">
+					<Columns>
+						<KudoCodeTableRow Title="Id" Property="Id" TItem="PortfolioAccountResponse" />
+						<KudoCodeTableRow Title="Short Name" Property="ShortName" TItem="PortfolioAccountResponse" />
+						<KudoCodeTableRow Title="Open Date" Property="Date" TItem="PortfolioAccountResponse" />
+					</Columns>
+				</KudoCodeTable>
+			</div>
+		</div>
+	</div>
+}
+
+@functions
+{
+	[Parameter]
+	public int Id { get; set; } = 0;
+
+	IWebResponseDto<GetPortfolioViewModel> _viewModel;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await Task.Run(() =>
+		{
+			_viewModel = WebHandlerController.Create<GetPortfolioRequest, GetPortfolioViewModel>()
+			.Execute(new GetPortfolioRequest() { Id = Id });
+		});
+
+	}
+
+	public void Save()
+	{
+		ApiPostController
+			.Create<SavePortfolioRequest, int>()
+			.SetOnSuccess((rsp) =>
+			{
+				_viewModel.Result.Id = rsp.Result;
+				_viewModel.Messages = new List<MessageDto>(rsp.Messages);
+				_viewModel.Messages.Add(new MessageDto("M1", "Success", MessageDtoType.Success));
+			})
+			.SetOnFail((rsp) => { _viewModel.Messages.AddRange(rsp.Messages); })
+			.Post(Mapper.Map<SavePortfolioRequest>(_viewModel.Result));
+	}
+
+}

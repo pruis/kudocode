@@ -1,0 +1,61 @@
+using System.Collections.Generic;
+using System.Linq;
+using Autofac;
+using KudoCode.LogicLayer.Infrastructure.Handlers;
+using KudoCode.Contracts.Api;
+using KudoCode.Contracts.Api;
+using KudoCode.LogicLayer.Infrastructure.Handlers.Interfaces;
+using Core.Test.Unit.AutoFacModule;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static KudoCode.Contracts;
+using KudoCode.LogicLayer.Dtos.<%folder%>;
+
+namespace Core.Test.Unit.<%folder%>.<%request%>
+{
+	[TestClass]
+	public class <%request%><%entity%><%type%>UnitTest : UnitTestBase
+	{
+		private <%request%><%entity%>Request _request;
+		private I<%type%>Context<<%response%>> _getResponse ;
+
+		public <%request%><%entity%><%type%>UnitTest()
+		{
+		}
+
+		[TestMethod]
+		public void <%request%><%entity%>Request<%type%>()
+		{
+			base.Run(
+				"<%request%><%entity%>Request <%type%>",
+				"",
+				"",
+				"");
+		}
+
+		protected override void Seed()
+		{
+            //            ApplicationContext.Container.Resolve<IAuthenticationContext<<%request%><%entity%><%type%>>>()
+            //                  .IsValidTokenProvided = true;
+		}
+
+		protected override void Given()
+		{
+			_request = new <%request%><%entity%>Request() { };
+		}
+
+		protected override void When()
+		{
+			_getResponse  = ApplicationContext
+				.Container
+				.Resolve<IHandler<<%request%><%entity%>Request, I<%type%>Context<<%response%>>>>()
+				.Handle(_request);
+		}
+
+		protected override void Then()
+		{
+		    Assert.IsTrue(false);
+			Assert.IsFalse(_getResponse .Messages.Any(a =>
+				a.Type == MessageDtoType.Error));
+		}
+	}
+}

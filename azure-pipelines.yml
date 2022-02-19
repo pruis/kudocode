@@ -1,0 +1,34 @@
+name: '$(BuildDefinitionName)_$(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)'
+trigger:
+- master
+
+variables:
+  baseName: 'KudoCodeWebApi'
+  System.Debug: 'false'
+  location: 'West Europe'
+  resourceGroupName: 'KudoCode'
+
+stages:
+- stage: build_and_publish
+  jobs:  
+   - template: Templates/Publish/publish-api.yaml
+     parameters:
+       artifactDestination: 'ApiArtifacts' 
+
+
+#- stage: deploy_to_uat
+#  dependsOn: build_and_publish
+#
+#  jobs:  
+#   - template: Templates/Deploy/deploy-api.yaml
+#     enabled: false
+#     parameters:
+#       apiArtifactLocation: 'ApiArtifacts'
+#       environmentName: 'uat'  
+#       connectedService: 'TescoDesign-SC'  
+#       templateArtifactLocation: 'ArmTemplateArtifacts' 
+#       resourceGroupName: 'Tesco'
+#       subscriptionId: '9b6c07d4-c41b-488c-8954-a36359d9d982'
+#       location: '$(location)'  
+#       baseName: '$(baseName)'  
+#       performance: 'free'      

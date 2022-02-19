@@ -1,0 +1,69 @@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using System
+@using System.Globalization
+@using System.Threading.Tasks
+@namespace KudoCode.Abstract.Web.Blazor
+
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodeUiComponent
+
+<div class="row">
+	<div class="@ColClass(0) col-sm-offset-3 ">
+		<div class="">@Title</div>
+	</div>
+	<div class="@ColClass(1) col-sm-offset-3">
+		<input type="date"
+			   disabled='@ReadOnly'
+			   placeholder="@Title"
+			   class="form-control datetimepicker-input textbox"
+			   @onchange="@SelectedDateChanged"
+			   value="@StringDate"
+			   id="@Id" />
+	</div>
+</div>
+
+@functions
+{
+
+	[Parameter]
+	public EventCallback<DateTime> OnChange { get; set; }
+
+	[Parameter]
+	public string Format { get; set; }
+
+	[Parameter]
+	public DateTime SelectedDate { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	string StringDate { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (SelectedDate.Year < 1900)
+		{
+			SelectedDate = DateTime.Now;
+			OnChange.InvokeAsync(SelectedDate).Wait();
+		}
+		StringDate = SelectedDate.ToString(Format);
+	}
+
+	async void SelectedDateChanged(ChangeEventArgs e)
+	{
+		var selectedDateAsString = e.Value.ToString();
+
+		try
+		{
+			SelectedDate = System.DateTime.ParseExact(selectedDateAsString,
+				Format, CultureInfo.InvariantCulture);
+			StringDate = SelectedDate.ToString(Format);
+		}
+		catch
+		{
+			SelectedDate = DateTime.Now;
+		}
+		OnChange.InvokeAsync(SelectedDate).Wait();
+	}
+
+}

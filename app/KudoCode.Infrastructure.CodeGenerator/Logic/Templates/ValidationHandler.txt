@@ -1,0 +1,15 @@
+using KudoCode.LogicLayer.Dtos.<%folder%>;
+using FluentValidation;
+using KudoCode.LogicLayer.Dtos.<%entity%>s.Outbound;
+
+namespace KudoCode.<%service%>.<%folder%>Domain.Handlers.<%request%>
+{
+	public class <%request%><%entity%>ValidationHandler : AbstractValidator<<%request%><%entity%>Request>
+	{
+		public <%request%><%entity%>ValidationHandler()
+		{
+			RuleFor(x => x).NotEmpty().NotNull();
+		}
+	}
+}
+

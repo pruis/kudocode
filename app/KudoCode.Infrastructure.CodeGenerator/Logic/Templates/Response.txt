@@ -1,0 +1,8 @@
+using System.Collections.Generic;
+
+namespace KudoCode.LogicLayer.Dtos.<%entity%>s.Outbound
+{
+    public class <%request%><%entity%>Response
+    {
+    }
+}

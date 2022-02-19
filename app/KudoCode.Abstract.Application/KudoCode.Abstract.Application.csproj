@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <TargetFramework>netcoreapp6.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Compile Remove="Dto\**" />
+      <Compile Remove="Logic\ApplicationUsers\AutoMapper\**" />
+      <EmbeddedResource Remove="Dto\**" />
+      <EmbeddedResource Remove="Logic\ApplicationUsers\AutoMapper\**" />
+      <None Remove="Dto\**" />
+      <None Remove="Logic\ApplicationUsers\AutoMapper\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+      <ProjectReference Include="..\KudoCode.Contracts.Api\KudoCode.Contracts.Api.csproj" />
+      <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Infrastructure\KudoCode.LogicLayer.Plugin.Redis.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.EntityFrameworkCore, Version=2.2.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>..\..\..\..\Users\MariusPruis\.nuget\packages\microsoft.entityframeworkcore\2.2.4\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.EntityFrameworkCore.Relational, Version=2.2.4.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+        <HintPath>..\..\..\..\Users\MariusPruis\.nuget\packages\microsoft.entityframeworkcore.relational\2.2.4\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
+      </Reference>
+      <Reference Include="Microsoft.IdentityModel.Tokens, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <HintPath>..\..\..\..\Users\MariusPruis\.nuget\packages\microsoft.identitymodel.tokens\5.3.0\lib\netstandard2.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
+      </Reference>
+      <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+        <HintPath>..\..\..\..\Users\MariusPruis\.nuget\packages\system.identitymodel.tokens.jwt\5.3.0\lib\netstandard2.0\System.IdentityModel.Tokens.Jwt.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.2" />
+      <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.15" />
+    </ItemGroup>
+
+</Project>

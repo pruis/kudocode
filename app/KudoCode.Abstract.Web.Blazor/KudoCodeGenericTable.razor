@@ -1,0 +1,195 @@
+﻿@page "/Test/{Request}/{Parameters}"
+
+@using Microsoft.AspNetCore.Components.Forms
+@using KudoCode.Abstract.Web.Blazor
+@using AutoMapper
+@using KudoCode.Contracts
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components.Web
+@using Radzen
+
+@namespace KudoCode.Abstract.Web.Blazor
+
+@inject KudoCode.Contracts.Web.ApiPostController ApiPostController
+@inject IMapper Mapper
+@inherits KudoCodePageComponent
+
+
+<div class="card">
+	<div class="row">
+		<div class="col">
+			<br />
+			<div class="row">
+				<div class="col">
+					<Radzen.Blazor.RadzenDataGrid AllowSorting="true" AllowFiltering="true" RowClick="@((a) => {SelectedItem = (TResponse)a.Data;  Edit(); })" TItem="TResponse" Data="@Model">
+						<Columns>
+							@foreach (var property in typeof(TResponse).GetProperties().Where(a => !a.GetCustomAttributes(typeof(VxIgnoreAttribute), false).Any()))
+							{
+								<Radzen.Blazor.RadzenDataGridColumn TItem="TResponse" Property=@(property.Name) Title=@(property.Name) />
+							}
+						</Columns>
+					</Radzen.Blazor.RadzenDataGrid>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-4">
+			<KudoCode.Abstract.Web.Blazor.KudoCodeGenericForm Service="@Service"
+															  TGetRequest="TGetRequest"
+															  TGetResponse="TGetResponse"
+															  TSaveRequest="TSaveRequest"
+															  TSaveResponse="TSaveResponse"
+															  TEditModel="TEditModel"
+															  Request="@GetRequest"
+															  Model="@EditModel"
+															  In="@In"
+															  Out="@Out"
+															  OnGetComplete="@((model,result)=>{ if (OnGetComplete!=null)OnGetComplete(model, result); })"
+															  ClearSelected="@(() =>
+																			   {
+																				   isSelected = false;
+																					if (Out != null)
+																						Mapper.Map(SelectedItem, Out);
+																			   })"
+															  OnSaveComplete="@((model,result) =>
+																				{
+																					if (!isSelected)
+																					{
+																						SelectedItem = Activator.CreateInstance<TResponse>();
+																						Mapper.Map(model, SelectedItem);
+																						Mapper.Map(result, SelectedItem);
+																						Model.Add(SelectedItem);
+																						isSelected = true;
+																						Model =  new List<TResponse>(Model);
+																					}
+																					else
+																					{
+																						Mapper.Map(model, SelectedItem);
+																						Mapper.Map(result, SelectedItem);
+																					}
+																					if (Out != null)
+																						Mapper.Map(SelectedItem, Out);
+
+																					if (OnSaveComplete != null)
+																						this.OnSaveComplete(model, result);
+																				})"
+															  OnSaveClickStart="@this.OnSaveClickStart" />
+		</div>
+	</div>
+</div>
+
+<br />
+
+@typeparam TListRequest
+@typeparam TListResponse
+@typeparam TResponse
+@typeparam TGetRequest
+@typeparam TGetResponse
+@typeparam TEditModel
+@typeparam TSaveRequest
+@typeparam TSaveResponse
+@typeparam TDeleteRequest
+@typeparam TDeleteResponse
+
+@code{ [Parameter]
+	public string Service { get; set; } = "";
+
+	[Parameter] public Action<TEditModel, object>? OnGetComplete { get; set; }
+
+	[Parameter] public TGetRequest GetRequest { get; set; } = Activator.CreateInstance<TGetRequest>();
+	[Parameter] public object In { get; set; }
+	[Parameter] public object Out { get; set; }
+
+	[Parameter] public TListRequest ListRequest { get; set; } = Activator.CreateInstance<TListRequest>();
+	public TListRequest preListRequest { get; set; }
+
+	[Parameter] public Action<TResponse>? OnEditClickComplete { get; set; }
+
+	[Parameter] public Action<TEditModel>? OnSaveClickStart { get; set; } = (saveRequest) => { };
+	[Parameter] public Action<object, object>? OnSaveComplete { get; set; }
+
+	private TResponse SelectedItem;
+	private bool isSelected;
+
+	public List<TResponse> Model = new List<TResponse>();
+
+	private VxFormLayoutOptionsAnnotated Options = new VxFormLayoutOptionsAnnotated();
+
+	public TEditModel EditModel = Activator.CreateInstance<TEditModel>();
+
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (In != null) ListRequest = Mapper.Map<TListRequest>(In);
+		if (Newtonsoft.Json.JsonConvert.SerializeObject(ListRequest).Equals(Newtonsoft.Json.JsonConvert.SerializeObject(preListRequest)))
+			return;
+
+		isSelected = false;
+		preListRequest = ListRequest;
+
+		await ApiPostController
+		.CreateAsync<TListRequest, TListResponse>()
+		.SetOnSuccess((rsp) =>
+		{
+			AddMessage("", $"data fetched", MessageDtoType.Success);
+			Model.Clear();
+			if (rsp.Result != null)
+				Model = ((IListResponse<TResponse>)rsp.Result).List;
+		})
+		.SetOnComplete((rsp) =>
+		{
+			Messages.AddRange(rsp.Messages);
+		})
+		.PostAsync(ListRequest, Service);
+	}
+	protected async void Delete()
+	{
+		await ApiPostController
+			.CreateAsync<TDeleteRequest, TDeleteResponse>()
+			.SetOnSuccess((rsp) =>
+			{
+				AddMessage("", $"item deleted", MessageDtoType.Success);
+				Model.Remove(SelectedItem);
+			})
+			.SetOnComplete((rsp) =>
+			{
+				Messages.AddRange(rsp.Messages);
+				InvokeAsync(StateHasChanged);
+			})
+			.PostAsync(Mapper.Map<TDeleteRequest>(SelectedItem), Service);
+	}
+	protected void Click(TResponse item)
+	{
+	}
+
+
+	protected async void Edit()
+	{
+		isSelected = true;
+		Mapper.Map(SelectedItem, GetRequest);
+
+		//GET
+		await ApiPostController
+		.CreateAsync<TGetRequest, TGetResponse>
+			()
+			.SetOnSuccess((rsp) =>
+			{
+			})
+			.SetOnComplete((rsp) =>
+			{
+				EditModel = Mapper.Map<TEditModel>(rsp.Result);
+				if (OnGetComplete != null)
+					OnGetComplete(EditModel, rsp);
+
+				Messages.AddRange(rsp.Messages);
+			})
+				.PostAsync(GetRequest, Service).ConfigureAwait(false);
+
+		if (Out != null)
+			Mapper.Map(SelectedItem, Out);
+
+		if (OnEditClickComplete != null)
+			OnEditClickComplete(SelectedItem);
+	}
+
+}

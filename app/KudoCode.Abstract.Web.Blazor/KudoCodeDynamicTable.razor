@@ -1,0 +1,180 @@
+﻿@page "/Test/{Request}/{Parameters}"
+
+@using Microsoft.AspNetCore.Components.Forms
+@using KudoCode.Abstract.Web.Blazor
+@using AutoMapper
+@using KudoCode.Contracts
+@using System.Diagnostics
+@using System.Linq
+@using KudoCode.Helpers
+@using System.Collections.Concurrent
+
+@namespace KudoCode.Abstract.Web.Blazor
+
+@inject KudoCode.Contracts.Web.ApiPostController ApiPostController
+@inject IMapper Mapper
+@inject IConvertToObject ConvertToObject
+@inherits KudoCodePageComponent
+
+<div class="card">
+	<div class="row">
+		<div class="col">
+			@if (TableConfig != null && TableConfig.Properties.Any())
+			{
+				<div class="row text-left">
+					<div class="col text-left">
+						@if (@Buttons != null)
+						{
+							@Buttons(SelectedItem);
+						}
+					</div>
+				</div>
+				<br />
+				<div class="row">
+					<div class="col">
+						<Radzen.Blazor.RadzenDataGrid AllowSorting="true" AllowFiltering="true" AllowPaging="true" RowClick="@((a) => { Edit(a.Data); })" TItem="object" Data="@Model">
+							<Columns>
+								@foreach (var property in TableConfig.Properties)
+								{
+									<Radzen.Blazor.RadzenDataGridColumn TItem="object" Property=@(property.Name) Title=@(property.Name) />
+								}
+							</Columns>
+						</Radzen.Blazor.RadzenDataGrid>
+
+					</div>
+				</div>
+			}
+		</div>
+		<div class="col-4">
+
+			<KudoCode.Abstract.Web.Blazor.KudoCodeDynamicForm TItem="@_type"
+															  Service="@Service"
+															  TableConfig="@TableConfig"
+															  SelectedItem="@SelectedItem"
+															  In="@In"
+															  OnGetComplete="@((model, result) => { })"
+															  ClearSelected="@(() => { isSelected = false; })"
+															  OnSaveComplete="@((result) =>
+																				{
+																					if (!isSelected)
+																					{
+																						var model = (object)_convertToObject.NewObject(TableConfigId, _type);
+																						StaticHelpers.Copy(result, model);
+																						Model.Add(model);
+																						Model = new List<object>(Model);
+																					}
+																					else
+																					{
+																						StaticHelpers.Copy(result, SelectedItem);
+																					}
+
+																					if (Out != null)
+																						Helpers.StaticHelpers.Copy(new { DynamicId = (int)((dynamic)result).Id }, Out);
+																					SelectedItem = null;
+
+																					if (OnSaveComplete != null)
+																						this.OnSaveComplete(result);
+
+																				})"
+															  OnSaveClickStart="@((model) => { })" />
+		</div>
+	</div>
+</div>
+
+<br />
+
+@code{
+	[Inject] protected IConvertToObject _convertToObject { get; set; }
+	[Inject] protected IListTableConfigStore _listTableConfigStore { get; set; }
+	[Parameter] public int TableConfigId { get; set; }
+	[Parameter] public string Service { get; set; } = "";
+	[Parameter] public Action<object, object>? OnGetComplete { get; set; }
+	[Parameter] public object In { get; set; }
+	[Parameter] public object Out { get; set; }
+	[Parameter] public Action<object>? OnEditClickComplete { get; set; }
+	[Parameter] public Action<object>? OnSaveComplete { get; set; }
+	[Parameter] public RenderFragment<object> Buttons { get; set; }
+
+	public Type _type { get; set; }
+	public TableConfig TableConfig { get; set; }
+	public List<object> Model = new List<object>();
+	public GetDynamicRequest GetRequest = new GetDynamicRequest();
+	private object SelectedItem = null;
+	private bool isSelected;
+	private ListDynamicRequest preListRequest = new ListDynamicRequest() { TableConfigId = 0 };
+
+	protected override async Task OnParametersSetAsync()
+	{
+		//Constructing List Request
+		var ListRequest = new ListDynamicRequest() { TableConfigId = TableConfigId };
+
+		if (In != null) ListRequest.DynamicId = ((dynamic)In).DynamicId;
+		if (ListRequest.TableConfigId != preListRequest.TableConfigId) _type = _convertToObject.GeTypeFromConfig(TableConfigId);
+		if (ListRequest == preListRequest)
+			return;
+		SelectedItem = null;
+		TableConfig = _listTableConfigStore.List.First(a => a.Id == TableConfigId);
+		preListRequest = ListRequest;
+		isSelected = false;
+		if (Out != null)
+			Helpers.StaticHelpers.Copy(new { DynamicId = 0 }, Out);
+
+		//LIST
+		await ApiPostController
+			.CreateAsync<ListDynamicRequest, ListDynamicResponse>()
+			.SetOnSuccess((rsp) =>
+			{
+				var list = new ConcurrentBag<object>();
+				Parallel.ForEach(rsp.Result.Data, item =>
+				{
+					if (item != null)
+					{
+						var _dynamicData = _convertToObject.ToObject(item, TableConfigId, _type);
+						list.Add((object)_dynamicData);
+					}
+				});
+				Model.Clear();
+				Model = list.ToList();
+				SelectedItem = null;
+				TableConfig = _listTableConfigStore.List.First(a => a.Id == TableConfigId);
+			})
+			.SetOnComplete((rsp) =>
+			{
+				Messages.AddRange(rsp.Messages);
+				ToastMessage(rsp.Messages.ToArray());
+				if (OnGetComplete != null)
+					OnGetComplete(SelectedItem, rsp);
+			})
+			.PostAsync(ListRequest, Service).ConfigureAwait(false);
+	}
+
+	protected async void Delete()
+	{
+		await ApiPostController
+			.CreateAsync<DeletePropertyConfigRequest, DeletePropertyConfigResponse>()
+			.SetOnSuccess((rsp) =>
+			{
+				AddMessage("", $"item deleted", MessageDtoType.Success);
+				Model.Remove((object)SelectedItem);
+			})
+			.SetOnComplete((rsp) =>
+			{
+				Messages.AddRange(rsp.Messages);
+			})
+			.PostAsync(Mapper.Map<DeletePropertyConfigRequest>(SelectedItem), Service);
+	}
+
+
+	protected void Edit(object item)
+	{
+		SelectedItem = item;
+		isSelected = true;
+		if (Out != null)
+			Helpers.StaticHelpers.Copy(new { DynamicId = (int)((dynamic)SelectedItem).Id }, Out);
+
+		if (OnEditClickComplete != null)
+			OnEditClickComplete(SelectedItem);
+
+	}
+
+}

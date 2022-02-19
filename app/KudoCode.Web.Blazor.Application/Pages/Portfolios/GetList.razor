@@ -1,0 +1,63 @@
+﻿@page "/portfolio-getList"
+@using KudoCode.LogicLayer.Dtos.Portfolios.Outbound
+@using KudoCode.Web.Blazor.Application.ViewModels
+@using KudoCode.Contracts.Web
+@using SharedComponents
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+g Microsof
+@inject WebHandlerController WebHandlerController
+
+@inherits KudoCodePageComponent
+
+<MessagesComponent Messages="@_viewModel.Messages" />
+
+<div lass="card">
+	<div class="card-header">
+		Portfolios
+	</div>
+
+	<div class="card-body">
+		<div class="card-text">
+			<KudoCodeTable Items="@_viewModel.Result.Portfolios">
+				<Columns>
+					<KudoCodeTableRow Title="Id" Property="Id" TItem="PortfolioResponse" />
+					<KudoCodeTableRow Title="Name" Property="Name" TItem="PortfolioResponse" />
+					<KudoCodeTableRow Title="Open Date" Property="OpenDate" TItem="PortfolioResponse">
+						@* <RowTemplate Context="ctx"> *@
+						@*     @ctx.OpenDate *@
+						@* </RowTemplate> *@
+					</KudoCodeTableRow>
+					<KudoCodeTableRow Title="GoTo" TItem="PortfolioResponse">
+						<RowTemplate Context="ctx">
+						</RowTemplate>
+					</KudoCodeTableRow>	
+				</Columns>
+			</KudoCodeTable>
+		</div>
+	</div>
+
+	<div class="card-footer text-muted">
+		This is the footer content
+	</div>
+
+</div>
+
+
+@functions
+{
+	IWebResponseDto<GetListPortfolioViewModel> _viewModel;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_viewModel =
+			WebHandlerController.Create<GetListPortfolioRequest, GetListPortfolioViewModel>()
+				.SetOnFail((rsp) =>
+				{
+				//                    if (rsp.Messages.Any(a => a.Key.Equals("E3")))
+				//                        Navigation.GoTo("/Dashboard");
+			})
+				.Execute(new GetListPortfolioRequest());
+	}
+
+}

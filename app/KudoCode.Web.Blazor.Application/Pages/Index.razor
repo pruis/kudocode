@@ -1,0 +1,248 @@
+﻿@page "/"
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components
+@using KudoCode.LogicLayer.Dtos.Emails
+@using KudoCode.LogicLayer.Dtos.Comanys.Outbound
+@using KudoCode.LogicLayer.Dtos.Portfolios.Outbound
+@using KudoCode.LogicLayer.Dtos.Companys.Outbound
+@using KudoCode.Contracts.Web
+@using KudoCode.LogicLayer.Dtos.Leads
+@using KudoCode.LogicLayer.Dtos.Leads.GetLead
+@using KudoCode.Contracts
+@using System.Linq
+@using Microsoft.AspNetCore.Components.Web
+@using KudoCode.Abstract.Web.Blazor
+@using System.Diagnostics
+@using Radzen.Blazor
+
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodePageComponent
+@inject ApiPostController ApiPostController
+@inject IListTableConfigStore _listTableConfigStore
+
+
+@{
+	var colLabelText = new int[] { 3, 9 };
+}
+
+
+@if (!ApplicationContextHandler.IsLoggedIn())
+{
+	<KudoCodeLogin Login="Login" />
+}
+else
+{
+	<div class="row">
+		<div class="col" style="width:100%">
+
+			<div id="accordion">
+				<div class="card">
+					<div class="card-header" id="headingOne">
+						<h5 class="mb-0">
+							<button class="btn btn-toolbar" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+								Table Configuration
+							</button>
+						</h5>
+					</div>
+					<div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+
+						<div class="card">
+							<div class="card-header" id="subheadingOne">
+								<h5 class="mb-0">
+									<button class="btn btn-toolbar collapsed" data-toggle="collapse" data-target="#subheadingOnedt" aria-expanded="true" aria-controls="subheadingOnedt">
+										Tables
+									</button>
+								</h5>
+							</div>
+							<div id="subheadingOnedt" class="collapse" aria-labelledby="subheadingOne" data-parent="#subheadingOne">
+								<KudoCodeGenericTable Service=""
+													  Out="@Model"
+													  TListRequest="ListTableConfigRequest"
+													  TListResponse="ListTableConfigResponse"
+													  TResponse="TableConfig"
+													  TGetRequest="GetTableConfigRequest"
+													  TEditModel="GetTableConfigResponse"
+													  TGetResponse="GetTableConfigResponse"
+													  TSaveRequest="SaveTableConfigRequest"
+													  TSaveResponse="SaveTableConfigResponse"
+													  TDeleteRequest="DeleteTableConfigRequest"
+													  TDeleteResponse="DeleteTableConfigResponse"
+													  OnSaveComplete="((ctx, model) => { InvokeAsync(StateHasChanged); })"
+													  OnEditClickComplete="((ctx) => { InvokeAsync(StateHasChanged); })" />
+							</div>
+						</div>
+
+						<div class="card">
+							<div class="card-header" id="subheadingtwo">
+								<h5 class="mb-0">
+									<button class="btn btn-toolbar collapsed" data-toggle="collapse" data-target="#subheadingtwodt" aria-expanded="true" aria-controls="subheadingtwodt">
+										Properties
+									</button>
+								</h5>
+							</div>
+							<div id="subheadingtwodt" class="collapse" aria-labelledby="subheadingtwodt" data-parent="#subheadingtwo">
+								<KudoCodeGenericTable Service=""
+													  In="@Model"
+													  TListRequest="ListPropertyConfigRequest"
+													  TListResponse="ListPropertyConfigResponse"
+													  TResponse="PropertyConfig"
+													  TGetRequest="GetPropertyConfigRequest"
+													  TEditModel="GetPropertyConfigResponse"
+													  TGetResponse="GetPropertyConfigResponse"
+													  TSaveRequest="SavePropertyConfigRequest"
+													  TSaveResponse="SavePropertyConfigResponse"
+													  TDeleteRequest="DeletePropertyConfigRequest"
+													  TDeleteResponse="DeletePropertyConfigResponse"
+													  OnSaveComplete="((ctx, model) => { InvokeAsync(StateHasChanged); })"
+													  OnEditClickComplete="((ctx) => { InvokeAsync(StateHasChanged); })" />
+							</div>
+						</div>
+
+						<div class="card">
+							<div class="card-header" id="subheadingThree">
+								<h5 class="mb-0">
+									<button class="btn btn-toolbar collapsed" data-toggle="collapse" data-target="#subheadingThreedt" aria-expanded="true" aria-controls="subheadingThreedt">
+										Child tables
+									</button>
+								</h5>
+							</div>
+							<div id="subheadingThreedt" class="collapse" aria-labelledby="subheadingThreedt" data-parent="#subheadingThree">
+								<KudoCodeGenericTable Service=""
+													  In="@Model"
+													  TListRequest="ListChildTableConfigRequest"
+													  TListResponse="ListChildTableConfigResponse"
+													  TResponse="ChildTableConfig"
+													  TGetRequest="GetChildTableConfigRequest"
+													  TEditModel="GetChildTableConfigResponse"
+													  TGetResponse="GetChildTableConfigResponse"
+													  TSaveRequest="SaveChildTableConfigRequest"
+													  TSaveResponse="SaveChildTableConfigResponse"
+													  TDeleteRequest="DeleteChildTableConfigRequest"
+													  TDeleteResponse="DeleteChildTableConfigResponse"
+													  OnSaveComplete="((ctx, model) => { InvokeAsync(StateHasChanged); })"
+													  OnEditClickComplete="((ctx) => { InvokeAsync(StateHasChanged); })" />
+
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<br />
+
+				<div class="card">
+					<div class="card-header">
+						Dynamic Tables: @(SelectedName)
+					</div>
+
+					<div class="card-bofy">
+						<div class="card-text">
+							@if (_selectedId.TableConfigId > 0)
+							{
+								<KudoCodeDynamicTable Out="@DynamicModel" TableConfigId=@_selectedId.TableConfigId
+													  OnSaveComplete="((ctx) => { InvokeAsync(StateHasChanged); })"
+													  OnEditClickComplete="((ctx) => { InvokeAsync(StateHasChanged); })">
+
+								</KudoCodeDynamicTable>
+
+								foreach (var item in _listTableConfigStore.List.First(a => a.Id == _selectedId.TableConfigId).ChildTableConfigs)
+								{
+									<KudoCodeDynamicTable In="@DynamicModel" TableConfigId=item.ChildConfigId
+														  OnSaveComplete="((ctx) => { InvokeAsync(StateHasChanged); })"
+														  OnEditClickComplete="((ctx) => { InvokeAsync(StateHasChanged); })" />
+								}
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+@functions
+{
+	[Inject] IApplicationContextHandler ApplicationContextHandler { get; set; }
+	[Inject] AppState _selectedId { get; set; }
+
+	TableConfigModel Model = new TableConfigModel() { TableConfigId = 0 };
+	Object DynamicModel = new KudoCode.Helpers.MyClassBuilder().CreateObject<object>("edit", new List<(string, Type)> { ("DynamicId", typeof(int)) });
+	ListCompanyRequest listComanyRequest = new ListCompanyRequest();
+	SendEmailRequest requesttoSend = new SendEmailRequest();
+	string SelectedName = "";
+	bool ReadOnly = false;
+	string Price = "10.01";
+
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await LoadTableConfig();
+		await base.OnParametersSetAsync();
+	}
+
+	async Task<IApiResponseContextDto<GetLeadResponse>> GetLeadAction(GetCompanyResponse model)
+	{
+		return await ApiPostController.CreateAsync<GetLeadRequest, GetLeadResponse>()
+										 .SetOnFail((lstRsp) => { Debugger.Break(); })
+										 .SetOnComplete((lstRsp) =>
+										 {
+											 ((GetCompanyResponse)model).Leads.List = new List<VxLookup>() { new VxLookup() { Id = 1, Value = "sss" },
+																 new VxLookup() { Id = 2, Value = "wwww" } };
+											 StateHasChanged();
+										 })
+										  .PostAsync(new GetLeadRequest() { Id = 1 }).ConfigureAwait(false);
+	}
+
+	async Task LoadTableConfig()
+	{
+		await ApiPostController
+		.CreateAsync<LoadTableConfigRequest, LoadTableConfigResponse>()
+			.SetOnSuccess((rsp) =>
+			{
+				_listTableConfigStore.List.RemoveAll(a => a != null);
+				_listTableConfigStore.List.AddRange(rsp.Result.List);
+			})
+			.SetOnComplete((rsp) =>
+			{
+				InvokeAsync(StateHasChanged);
+			})
+		.PostAsync(new LoadTableConfigRequest() { }, "").ConfigureAwait(false);
+
+	}
+
+	private async void Login(GetTokenRequest request)
+	{
+		await ApiPostController.CreateAsync<GetTokenRequest, ApplicationUserContext>()
+			.SetOnSuccess((rsp) =>
+			{
+			//Navigation.GoTo("/Dashboard");
+			ApplicationContextHandler.SetContext(rsp.Result);
+			})
+			.SetOnFail((rsp) =>
+			{
+				ToastMessage(rsp.Messages.ToArray());
+			})
+			.SetOnComplete((rsp) =>
+			{
+				InvokeAsync(StateHasChanged);
+
+			})
+			.PostAsync(new GetTokenRequest
+			{
+				Email = request.Email,
+				Password = request.Password,
+			}, "");
+	}
+
+	void GoTo()
+	{
+		Navigation.GoTo("portfolio-getList");
+	}
+
+	protected override void OnInitialized()
+	{
+		_selectedId.OnChange += StateHasChanged;
+	}
+
+	public void Dispose()
+	{
+		_selectedId.OnChange -= StateHasChanged;
+	}
+}

@@ -1,0 +1,11 @@
+using KudoCode.Contracts;
+using KudoCode.Contracts;
+
+namespace KudoCode.LogicLayer.Dtos.<%entity%>s.Outbound
+{
+    public class <%request%><%entity%>Request : IApiRequestDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+}

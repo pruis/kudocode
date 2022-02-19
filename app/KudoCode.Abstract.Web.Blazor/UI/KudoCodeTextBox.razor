@@ -1,0 +1,110 @@
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using System
+@using System.Diagnostics
+@using System.Globalization
+@using System.Threading.Tasks
+@using Microsoft.Extensions.Configuration
+@namespace KudoCode.Abstract.Web.Blazor
+
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodeUiComponent
+
+@inject IJSRuntime JsRuntime
+@inject IConfiguration Configuration
+
+<div class="row">
+
+	@if (!String.IsNullOrWhiteSpace(Title))
+	{
+		<div class="@ColClass(0) col-sm-offset-3">
+			<div class="">@Title</div>
+		</div>
+	}
+
+	<div class="@ColClass(1) col-sm-offset-3">
+		@if (Type.Equals("currency", StringComparison.InvariantCulture))
+		{
+			<input disabled="@ReadOnly"
+				   placeholder="@Placeholder"
+				   type="text"
+				   class="@Class"
+				   value="@Value"
+				   @onchange="@Change"
+				   id="@Id" />
+		}
+		else if (Type.Equals("decimal", StringComparison.InvariantCulture))
+		{
+			<input disabled="@ReadOnly"
+				   placeholder="@Placeholder"
+				   class="@Class"
+				   value="@Value"
+				   @onchange="@Change"
+				   id="@Id" />
+		}
+		else
+		{
+			<input disabled="@ReadOnly"
+				   placeholder="@Placeholder"
+				   type="@Type"
+				   class="@Class"
+				   value="@Value"
+				   @onchange="@Change"
+				   id="@Id" />
+		}
+	</div>
+</div>
+
+
+@functions
+{
+
+	[Parameter]
+	public EventCallback<string> OnChange { get; set; }
+
+	[Parameter]
+	public string Value { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
+	public string Placeholder { get; set; }
+
+	[Parameter]
+	public string Type { get; set; }
+
+	[Parameter]
+	public string Class { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Run(() =>
+		{
+			if (string.IsNullOrWhiteSpace(Type))
+				Type = "text";
+			if (string.IsNullOrWhiteSpace(Class))
+				Class = "form-control textbox";
+
+			if (string.IsNullOrWhiteSpace(Id))
+				Id = Guid.NewGuid().ToString().Replace("-", string.Empty);
+		});
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (Type.Equals("currency", StringComparison.InvariantCulture))
+			await JsRuntime.InvokeAsync
+				<string>("KudoCodeCurrencyInput.addEventListener", @Id);
+		if (Type.Equals("decimal", StringComparison.InvariantCulture))
+			await JsRuntime.InvokeAsync
+				<string>("KudoCodeDecimalInput.addEventListener", @Id);
+	}
+
+	async void Change(ChangeEventArgs e)
+	{
+		Value = e.Value.ToString();
+		OnChange.InvokeAsync(Value).Wait();
+	}
+
+}

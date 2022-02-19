@@ -1,0 +1,46 @@
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodeUiComponent
+@using System.Collections.Generic
+@using Microsoft.AspNetCore.Components
+@typeparam TItem
+@namespace KudoCode.Abstract.Web.Blazor
+
+
+<div class="table-responsive">
+	<div class="table">
+		<thead>
+			<tr>
+				<CascadingValue Value="@header" Name="RenderType">
+					@Columns
+				</CascadingValue>
+			</tr>
+		</thead>
+		<tbody>
+			<CascadingValue Value="@row" Name="RenderType">
+				@foreach (var i in Items)
+				{
+					<tr>
+						<CascadingValue Value="@i" Name="Item">
+							@Columns
+						</CascadingValue>
+					</tr>
+				}
+			</CascadingValue>
+		</tbody>
+	</div>
+</div>
+
+@functions {
+
+	string header = "header";
+	string row = "row";
+
+	[Parameter]
+	public List<TItem> Items { get; set; }
+
+	[Parameter]
+	public RenderFragment Columns { get; set; }
+
+}
+
+@* reference *@
+@* https://ankitsharmablogs.com/blazorgrid-reusable-grid-component-for-blazor/ *@
