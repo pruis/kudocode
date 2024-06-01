@@ -1,0 +1,262 @@
+﻿@page "/Test/{Request}/{Parameters}"
+
+@using KudoCode.Contracts.Web
+@using Microsoft.AspNetCore.Components.Forms
+@using KudoCode.Abstract.Web.Blazor
+@using AutoMapper
+@using KudoCode.Contracts
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components.Web
+@using Radzen
+
+@namespace KudoCode.Abstract.Web.Blazor
+
+@inject KudoCode.Contracts.Web.ApiPostController ApiPostController
+@inject IMapper Mapper
+@inject ILookupService _lookupService
+
+@implements IKudoCodeGenericTable<TResponse>
+
+@inherits KudoCodePageComponent
+
+
+<div class="card">
+    <div class="card-body-spacer" />
+
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <Radzen.Blazor.RadzenDataGrid AllowColumnResize=true
+                                                  AllowSorting=true
+                                                  AllowFiltering=true
+                                                  FilterMode=FilterMode.Advanced
+                                                  PageSize=@GetPageSise()
+                                                  AllowPaging=true
+                                                  PagerHorizontalAlign=HorizontalAlign.Left
+                                                  ShowPagingSummary=true
+                                                  @ref=RadzenDataGrid
+                                                  RowRender=RowRender
+                                                  RowClick=@((a) => {SelectedItem = (TResponse)a.Data; Edit(); })
+                                                  TItem=TResponse
+                                                  Data=@Model>
+                        <Columns>
+                            @foreach (var property in typeof(TResponse).GetProperties().Where(a => !a.GetCustomAttributes(typeof(VxIgnoreAttribute), false).Any()))
+                            {
+                                <Radzen.Blazor.RadzenDataGridColumn TItem="TResponse" Property=@(property.Name) Title=@(property.Name) />
+                            }
+                        </Columns>
+                    </Radzen.Blazor.RadzenDataGrid>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <KudoCode.Abstract.Web.Blazor.KudoCodeGenericForm @ref=KudoCodeGenericForm
+                                                              Buttons="@Buttons"
+                                                              Service="@Service"
+                                                              TGetRequest="TGetRequest"
+                                                              TGetResponse="TGetResponse"
+                                                              TSaveRequest="TSaveRequest"
+                                                              TSaveResponse="TSaveResponse"
+                                                              TEditModel="TEditModel"
+                                                              Request="@GetRequest"
+                                                              Model="@EditModel"
+                                                              In="@In"
+                                                              Out="@Out"
+                                                              DeleteCallback="()=>{Delete();}"
+                                                              OnChanged=OnChanged
+                                                              OnGetComplete="@((model,result)=>{
+                                                                                    if (OnGetComplete!=null)OnGetComplete(model, result);
+    																				//Mapper.Map(result.Result, SelectedItem);
+                                                                                })"
+                                                              ClearSelected="@(() =>
+																			   {
+																				   isSelected = false;
+                                                                                   SelectedItem = Activator.CreateInstance<TResponse>();
+                                                                                   GetRequest = Activator.CreateInstance<TGetRequest>();
+
+                                                                                   if(EditModel != null)
+                                                                                        EditModel = Activator.CreateInstance<TEditModel>();
+
+																					if (Out != null)
+																						Mapper.Map(SelectedItem, Out);
+
+                                                                                    if(OnClearComplete != null)
+                                                                                        OnClearComplete(EditModel);
+                                                                                })"
+                                                              OnSaveComplete="@((model,result) =>
+																				{
+																					if (!isSelected)
+																					{
+																						SelectedItem = Activator.CreateInstance<TResponse>();
+																						Mapper.Map(model, SelectedItem);
+																						Mapper.Map(result, SelectedItem);
+																						Model.Add(SelectedItem);
+																						isSelected = true;
+																						Model =  new List<TResponse>(Model);
+																					}
+																					else
+																					{
+																						Mapper.Map(model, SelectedItem);
+																						Mapper.Map(result, SelectedItem);
+																					}
+																					if (Out != null)
+																						Mapper.Map(SelectedItem, Out);
+
+																					if (OnSaveComplete != null)
+																						this.OnSaveComplete(model, result);
+																				})"
+                                                              OnSaveClickStart="@this.OnSaveClickStart" />
+        </div>
+    </div>
+    <div class="card-body-spacer" />
+
+</div>
+
+<br />
+
+@typeparam TListRequest
+@typeparam TListResponse
+@typeparam TResponse
+@typeparam TGetRequest
+@typeparam TGetResponse
+@typeparam TEditModel
+@typeparam TSaveRequest
+@typeparam TSaveResponse
+@typeparam TDeleteRequest
+@typeparam TDeleteResponse
+
+@code {
+
+    [Parameter] public Action<RowRenderEventArgs<TResponse>> RowRender { get; set; }
+    [Parameter] public RenderFragment<TEditModel> Buttons { get; set; }
+    [Parameter] public string Service { get; set; } = "";
+    [Parameter] public int PageSize { get; set; } = 10;
+    [Parameter] public Action<TEditModel, IApiResponseContextDto<TGetResponse>>? OnGetComplete { get; set; }
+    [Parameter] public TGetRequest GetRequest { get; set; } = Activator.CreateInstance<TGetRequest>();
+    [Parameter] public object In { get; set; }
+    [Parameter] public object Out { get; set; }
+    [Parameter] public TListRequest ListRequest { get; set; } = Activator.CreateInstance<TListRequest>();
+    [Parameter] public Func<TEditModel, Task>? OnSaveClickStart { get; set; }
+    [Parameter] public Action<TEditModel, TSaveResponse>? OnSaveComplete { get; set; }
+    [Parameter] public Action<TEditModel>? OnClearComplete { get; set; }
+    [Parameter] public Action<TEditModel>? OnChanged { get; set; }
+
+    private KudoCodeGenericForm<TGetRequest, TGetResponse, TSaveRequest, TSaveResponse, TEditModel> KudoCodeGenericForm { get; set; }
+    public TListRequest preListRequest { get; set; }
+    private TResponse SelectedItem;
+    private bool isSelected;
+
+    public List<TResponse> Model { get; set; } = new List<TResponse>();
+    public Radzen.Blazor.RadzenDataGrid<TResponse> RadzenDataGrid { get; set; }
+
+    private VxFormLayoutOptionsAnnotated Options = new VxFormLayoutOptionsAnnotated();
+
+    public TEditModel EditModel = Activator.CreateInstance<TEditModel>();
+
+    public int GetPageSise()
+    {
+
+        if (this.PageSize > 0)
+            return PageSize;
+
+        if (typeof(TEditModel).GetProperties().Length < 5)
+            return 5;
+
+        return typeof(TEditModel).GetProperties().Length;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (In != null)
+        { ListRequest = Mapper.Map<TListRequest>(In); }
+        if (Newtonsoft.Json.JsonConvert.SerializeObject(ListRequest).Equals(Newtonsoft.Json.JsonConvert.SerializeObject(preListRequest)))
+            return;
+
+        isSelected = false;
+        preListRequest = ListRequest;
+
+        await ApiPostController
+        .CreateAsync<TListRequest, TListResponse>()
+        .SetOnSuccess(async (rsp) =>
+        {
+            Model.Clear();
+            if (rsp.Result != null)
+                Model = ((IListResponse<TResponse>)rsp.Result).List;
+
+            if (KudoCodeGenericForm != null)
+                await KudoCodeGenericForm.Clear();
+
+            EditModel = Activator.CreateInstance<TEditModel>();
+            if (In != null) Mapper.Map(In, EditModel);
+            await _lookupService.Fetch(EditModel);
+
+        })
+        .SetOnComplete((rsp) =>
+        {
+            if (rsp != null)
+                Messages.AddRange(rsp.Messages);
+        })
+        .PostAsync(ListRequest, Service);
+    }
+    protected async void Delete()
+    {
+        await ApiPostController
+            .CreateAsync<TDeleteRequest, TDeleteResponse>()
+            .SetOnSuccess(async (rsp) =>
+            {
+                AddMessage("", $"item deleted", MessageDtoType.Success);
+                Model.Remove(SelectedItem);
+                Model = new List<TResponse>(Model);
+
+                if (KudoCodeGenericForm != null)
+                    await KudoCodeGenericForm.Clear();
+            })
+            .SetOnComplete(async (rsp) =>
+            {
+                Messages.AddRange(rsp.Messages);
+                await InvokeAsync(StateHasChanged);
+            })
+            .PostAsync(Mapper.Map<TDeleteRequest>(SelectedItem), Service);
+    }
+
+    protected async void Edit()
+    {
+        isSelected = true;
+        Mapper.Map(SelectedItem, GetRequest);
+
+        //GET
+        await ApiPostController
+        .CreateAsync<TGetRequest, TGetResponse>
+            ()
+            .SetOnSuccess(async (rsp) =>
+            {
+            })
+            .SetOnComplete(async (rsp) =>
+            {
+                Messages.AddRange(rsp.Messages);
+
+                if (EditModel != null && EditModel is IDisposable)
+                    ((IDisposable)EditModel).Dispose();
+
+                EditModel = Mapper.Map<TEditModel>(rsp.Result);
+
+                if (In != null)
+                    Mapper.Map(In, EditModel);
+
+                if (Out != null)
+                    Mapper.Map(SelectedItem, Out);
+
+                await _lookupService.Fetch(EditModel);
+
+                if (OnGetComplete != null)
+                    OnGetComplete(EditModel, rsp);
+
+            })
+            .PostAsync(GetRequest, Service).ConfigureAwait(false);
+
+
+    }
+
+}

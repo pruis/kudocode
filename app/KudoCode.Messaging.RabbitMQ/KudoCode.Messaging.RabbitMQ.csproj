@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Helpers\KudoCode.Helpers.csproj" />
+    <ProjectReference Include="..\KudoCode.Web.Api.Connector\KudoCode.Web.Api.Connector.csproj" />
+  </ItemGroup>
+
+</Project>

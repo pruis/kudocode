@@ -1,0 +1,15 @@
+﻿@namespace KudoCode.Abstract.Web.Blazor
+@inherits KudoCode.Abstract.Web.Blazor.VxFormGroupComponent
+
+<fieldset>
+
+    <h5>@FormGroupDefinition.Label</h5>
+
+
+    @foreach (var row in FormGroupDefinition.Rows)
+    {
+        <KudoCode.Abstract.Web.Blazor.VxFormRow FormRowDefinition="@row">
+
+        </KudoCode.Abstract.Web.Blazor.VxFormRow>
+    }
+</fieldset>

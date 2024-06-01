@@ -1,0 +1,8 @@
+using KudoCode.Contracts;
+
+namespace KudoCode.LogicLayer.Dtos
+{
+    public class <%entity%>ViewModel
+    {
+    }
+ }

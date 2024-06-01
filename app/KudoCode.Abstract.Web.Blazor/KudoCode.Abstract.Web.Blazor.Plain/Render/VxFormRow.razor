@@ -1,0 +1,14 @@
+﻿@namespace KudoCode.Abstract.Web.Blazor
+@inherits KudoCode.Abstract.Web.Blazor.VxFormRowComponent
+
+<div class="form-row">
+	@if (FormRowDefinition.Label != null)
+	{
+<label class="col-sm-5 col-form-label">@FormRowDefinition.Label</label>}
+
+	@foreach (var column in FormRowDefinition.Columns)
+	{
+<KudoCode.Abstract.Web.Blazor.VxFormColumn FormColumnDefinition="@column">
+</KudoCode.Abstract.Web.Blazor.VxFormColumn>}
+</div>
+

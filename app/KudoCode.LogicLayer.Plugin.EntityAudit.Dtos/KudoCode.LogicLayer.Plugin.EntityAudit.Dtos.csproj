@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>kudocode.me</PackageProjectUrl>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+    <ProjectReference Include="..\KudoCode.Contracts.Api\KudoCode.Contracts.Api.csproj" />
+  </ItemGroup>
+
+</Project>

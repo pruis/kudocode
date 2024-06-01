@@ -1,0 +1,196 @@
+﻿@page "/Test/{Request}/{Parameters}"
+
+@using System.Diagnostics
+@using KudoCode.Contracts.Web
+@using KudoCode.Abstract.Web.Blazor
+@using KudoCode.Abstract.Web.Blazor
+@using KudoCode.Contracts
+@using Microsoft.AspNetCore.Components.Forms
+@using KudoCode.Abstract.Web.Blazor
+@using AutoMapper
+
+@inject KudoCode.Contracts.Web.ApiPostController ApiPostController;
+@inject IMapper Mapper;
+@inject ILookupService _lookupService
+@inherits KudoCodePageComponent
+
+
+<EditForm Model="Model"
+          OnValidSubmit="HandleValidSubmit"
+          OnInvalidSubmit="HandleInValidSubmit">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    @if (Buttons != null)
+                    {
+                        @Buttons(Model)
+                    }
+                    <div class="col" style="padding: 0.15em;">
+                        <KudoCodeButton value="delete" Class="btn btn-danger btn-fixed" Click="(() => {DeleteCallback();})" />
+                    </div>
+                    <div class="col" style="padding: 0.15em;">
+                        <KudoCodeButton value="new" Class="btn-secondary btn-fixed" Click="(() => {Clear();})" />
+                    </div>
+                    <div class="col" style="padding: 0.15em;">
+                        <button style="width:100%" class="btn btn-primary btn-fixed" type="submit">save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col text-right">
+                <KudoCode.Abstract.Web.Blazor.Validation.ObjectGraphDataAnnotationsValidator />
+                <RenderFormElements FormLayoutOptions="@OptionsForForm"></RenderFormElements>
+            </div>
+        </div>
+
+    </div>
+</EditForm>
+<br />
+
+@typeparam TGetRequest
+@typeparam TGetResponse
+
+@typeparam TSaveRequest
+@typeparam TSaveResponse
+
+@typeparam TEditModel
+
+@code {
+    [Parameter] public RenderFragment<TEditModel> Buttons { get; set; }
+
+    [Parameter] public TGetRequest Request { get; set; }
+    [Parameter] public string Service { get; set; } = "";
+    [Parameter] public object In { get; set; }
+    [Parameter] public object Out { get; set; }
+
+    [Parameter] public Action? DeleteCallback { get; set; }
+    [Parameter] public Action<TEditModel, TSaveResponse>? OnSaveComplete { get; set; }
+    [Parameter] public Action<TEditModel, IApiResponseContextDto<TGetResponse>>? OnGetComplete { get; set; }
+    [Parameter] public Func<TEditModel, Task>? OnSaveClickStart { get; set; }
+    [Parameter] public Action<TEditModel>? OnChanged { get; set; }
+    [Parameter] public Action? ClearSelected { get; set; }
+
+    private bool _firstRendered = false;
+
+    /// <summary>
+    /// Model that is used for the form
+    /// </summary>
+    ///
+    [Parameter]
+    public TEditModel Model { get; set; }
+    private bool saveTriggered = false;
+
+    private VxFormLayoutOptionsAnnotated Options = new VxFormLayoutOptionsAnnotated();
+    private VxFormLayoutOptions OptionsForForm = new VxFormLayoutOptions();
+
+    public void NewModel()
+    {
+        if (Model != null && Model is IViewModelHasChanged)
+            ((IViewModelHasChanged)Model).ViewModelHasChanged -= ViewModelHasChanged;
+
+        if (Model != null && Model is IDisposable)
+            ((IDisposable)Model).Dispose();
+
+        Model = Activator.CreateInstance<TEditModel>();
+
+        if (Model is IViewModelHasChanged)
+            ((IViewModelHasChanged)Model).ViewModelHasChanged += ViewModelHasChanged;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!_firstRendered && Model != null && Model is IViewModelHasChanged)
+        {
+            ((IViewModelHasChanged)Model).ViewModelHasChanged -= ViewModelHasChanged;
+            ((IViewModelHasChanged)Model).ViewModelHasChanged += ViewModelHasChanged;
+        }
+    }
+
+    public async Task Clear()
+    {
+        NewModel();
+
+        if (In != null)
+            Mapper.Map(In, Model);
+
+        await _lookupService.Fetch(Model);
+        if (ClearSelected != null)
+            ClearSelected();
+    }
+
+    public void Delete()
+    {
+        Clear();
+        if (DeleteCallback != null)
+            DeleteCallback();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        _firstRendered = firstRender;
+    }
+
+    /// <summary>
+    /// Will handle the submit action of the form
+    /// </summary>
+    /// <param name="context">The model with values as entered in the form</param>
+    private async Task HandleValidSubmit(EditContext context)
+    {
+        if (OnSaveClickStart != null)
+            await OnSaveClickStart(Model);
+
+        var saveRequest = Mapper.Map<TSaveRequest>(context.Model);
+        if (In != null)
+        {
+            Mapper.Map(In, Model);
+            Mapper.Map(In, saveRequest);
+        }
+
+        //SAVE
+        await ApiPostController
+        .CreateAsync<TSaveRequest, TSaveResponse>()
+        .SetOnSuccess((rsp) =>
+        {
+            Mapper.Map(rsp.Result, Model);
+
+            if (OnSaveComplete != null)
+                OnSaveComplete(Model, rsp.Result);
+            Messages.Add(new MessageDto("", "Saved", MessageDtoType.Success));
+            //await Clear();
+
+        })
+        .SetOnComplete((rsp) =>
+        {
+            Messages.AddRange(rsp.Messages);
+        })
+        .PostAsync(saveRequest, Service);
+    }
+
+
+    private void HandleInValidSubmit(EditContext context)
+    {
+
+    }
+
+    public void ViewModelHasChanged(string prop)
+    {
+        var childLookup = Model.GetType().GetProperty(prop);
+        if (childLookup != null)
+            _lookupService.Fetch(Model, childLookup);
+
+        if (OnChanged != null)
+            OnChanged(Model);
+
+        InvokeAsync(StateHasChanged);
+    }
+
+}

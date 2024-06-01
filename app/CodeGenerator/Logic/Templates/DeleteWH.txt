@@ -1,0 +1,39 @@
+using Autofac;
+using AutoMapper;
+using KudoCode.Contracts.Api;
+using KudoCode.LogicLayer.Dtos;
+
+namespace KudoCode.<%service%>Service.Domain
+{
+    public class Delete<%entity%>WorkerHandler : CommandHandler<Delete<%entity%>Request,
+        <%entity%>, Delete<%entity%>Response>
+    {
+        public Delete<%entity%>WorkerHandler(
+            IMapper mapper,
+            IRepository repository,
+            ILifetimeScope scope,
+            IWorkerContext<Delete<%entity%>Response> context)
+            : base(mapper, repository, scope, context)
+        {
+        }
+
+        protected override void GetEntity()
+        {
+            Entity =
+                Repository.GetOne<<%entity%>>(a => a.Id == Request.Id);
+        }
+
+        protected override void ValidateEntity()
+        {
+            if (Entity == null)
+                Context.AddMessage("E4");
+        }
+
+        protected override void Execute()
+        {
+            Repository.Delete(Entity);
+            Repository.SaveChanges();
+            Context.Result = new Delete<%entity%>Response();
+        }
+    }
+}

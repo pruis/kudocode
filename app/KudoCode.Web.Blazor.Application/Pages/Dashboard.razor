@@ -1,0 +1,102 @@
+﻿@page "/dashboard"
+@using System.Diagnostics
+@using System.Linq.Expressions
+@using KudoCode.LogicLayer.Dtos.Portfolios.Outbound
+@using KudoCode.Web.Blazor.Application.ViewModels
+@using KudoCode.Contracts.Web
+@using Microsoft.AspNetCore.Components
+@using SharedComponents
+@using KudoCode.LogicLayer.Dtos.Comanys.Outbound
+@using KudoCode.LogicLayer.Dtos.Companys.Outbound
+@using Radzen.Blazor
+
+@inject NavigationManager UriHelper
+@inject ILookupService _lookupService
+
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodePageComponent
+
+
+<div id="Dashboard">
+
+    <MessagesComponent Messages="@_viewModel.Messages" />
+
+    <div class="card">
+        <div class="card-header">
+            This is the header content
+        </div>
+
+        <div class="card-body">
+
+
+            <KudoCodeGenericTable TListRequest="ListCompanyRequest"
+                                  TListResponse="ListCompanyResponse"
+                                  TResponse="CompanyResponse"
+                                  TGetRequest="GetCompanyRequest"
+                                  TEditModel="GetCompanyResponse"
+                                  TGetResponse="GetCompanyResponse"
+                                  TSaveRequest="SaveCompanyRequest"
+                                  TSaveResponse="SaveCompanyResponse"
+                                  TDeleteRequest="DeleteCompanyRequest"
+                                  TDeleteResponse="DeleteCompanyResponse"
+                                  OnGetComplete="@((vm, rsp) =>{
+															 InvokeAsync(StateHasChanged);
+														 })">
+                <Buttons  Context="ctx">
+                    <div class="col-3">
+                        <KudoCodeButton value="navigate" Class="btn btn-danger" Click="(() => {DeleteCallback(ctx);})" />
+                    </div>
+                </Buttons>
+            </KudoCodeGenericTable>
+
+
+         <RadzenUpload Auto="true" Multiple="true" Url="/api/Media/Upload" Complete=@((args) => Complete(args)) Class="w-100" />
+
+        </div>
+
+        <div class="card-footer">
+            This is the footer content
+        </div>
+    </div>
+</div>
+
+@functions
+{
+
+    public void Complete(UploadCompleteEventArgs args)
+    {
+        
+    }
+        DateTime Date = DateTime.Now;
+    bool Edit = true;
+
+    WebResponseDto<DashboardViewModel> _viewModel;
+
+    void OnChange(UploadProgressArgs args, string name)
+    {
+
+    }
+
+    void OnProgress(UploadProgressArgs args, string name)
+    {
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Run(() => { _viewModel = new WebResponseDto<DashboardViewModel>(); });
+    }
+
+    void DeleteCallback(object x)
+    {
+        Debugger.Break();
+    }
+    void Action()
+
+    {
+        Edit = !Edit;
+        var x = Date.ToString();
+
+        Navigation.GoTo("portfolio-getList");
+    }
+
+}

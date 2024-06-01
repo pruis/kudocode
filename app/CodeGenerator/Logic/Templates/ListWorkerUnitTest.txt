@@ -1,0 +1,61 @@
+using Autofac;
+using KudoCode.Contracts;
+using KudoCode.Contracts.Api;
+using KudoCode.LogicLayer.Dtos;
+using KudoCode.Test.Unit;
+using KudoCode.Test.Unit.InMemoryDataBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+
+namespace KudoCode.Tests.<%service%>Service.<%entity%>.Worker
+{
+    [TestClass]
+    public class List<%entity%>WUnitTest : UnitTestBase
+    {
+        private List<%entity%>Request _request;
+        private IWorkerContext<List<%entity%>Response> _getResponse;
+
+        public List<%entity%>WUnitTest()
+        {
+        }
+
+        [TestMethod]
+        public void List<%entity%>Worker()
+        {
+            base.Run(
+                "List<%entity%> Worker",
+                "",
+                "",
+                "");
+        }
+
+        protected override void Seed()
+        {
+            SeedDataBase.InitializeDataBase();
+            ApplicationContext
+                .Container
+                .Resolve<IHandler<Save<%entity%>Request, IWorkerContext<Save<%entity%>Response>>>()
+                .Handle(new Save<%entity%>Request() {});
+        }
+
+        protected override void Given()
+        {
+            _request = new List<%entity%>Request() { };
+        }
+
+        protected override void When()
+        {
+            _getResponse = ApplicationContext
+                .Container
+                .Resolve<IHandler<List<%entity%>Request, IWorkerContext<List<%entity%>Response>>>()
+                .Handle(_request);
+        }
+
+        protected override void Then()
+        {
+            Assert.IsFalse(_getResponse.Messages.Any(a =>
+               a.Type == MessageDtoType.Error));
+            Assert.IsTrue(_getResponse.Result.List.Count() > 0);
+        }
+    }
+}

@@ -1,0 +1,20 @@
+﻿@namespace VxFormGenerator.Render.Bootstrap
+
+@typeparam TFormElement
+@inherits BootstrapFormElementComponent<TFormElement>
+
+
+<div class="@CssClass">
+    @if (!string.IsNullOrWhiteSpace(FormColumnDefinition.RenderOptions.Label) && FormColumnDefinition.RenderOptions.ShowLabel)
+    {        
+            <label class="col-form-label" for="@Id">@FormColumnDefinition.RenderOptions.Label</label>       
+    }
+
+
+    @CreateComponent()
+
+    <KudoCode.Abstract.Web.Blazor.Validation.VxValidationMessage For="@ValueExpression" Class="form-text">
+    </KudoCode.Abstract.Web.Blazor.Validation.VxValidationMessage>
+
+</div>
+

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Application\**" />
+    <Compile Remove="EntityAudit\**" />
+    <Compile Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Application\**" />
+    <EmbeddedResource Remove="EntityAudit\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <None Remove="Application\**" />
+    <None Remove="EntityAudit\**" />
+    <None Remove="Interfaces\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authorization\Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Abstract.Web.Blazor\KudoCode.Abstract.Web.Blazor.csproj" />
+    <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+using KudoCode.Contracts;
+using System;
+using System.Collections.Generic;
+
+namespace KudoCode.LogicLayer.Dtos
+{
+    public class List<%entity%>Response : IListResponse<<%entity%>Response>
+    {
+    }
+}

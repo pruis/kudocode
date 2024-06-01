@@ -1,0 +1,65 @@
+@inherits KudoCode.Abstract.Web.Blazor.KudoCodeUiComponent
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components
+@typeparam TItem
+@namespace KudoCode.Abstract.Web.Blazor
+@using Microsoft.AspNetCore.Components.Web
+
+@if (@RenderType.Equals("header"))
+{
+	<th scope="col">
+		@Title
+	</th>
+}
+else if (@RenderType.Equals("row"))
+{
+	if (RowTemplate != null)
+	{
+		<td>
+			@RowTemplate(Item)
+		</td>
+	}
+	else
+	{
+		<td>
+			<a @onclick="@(()=> { if (OnClick!=null)OnClick(Item); })">
+				@Item.GetType().GetProperty(Property).GetValue(Item, null)
+			</a>
+		</td>
+	}
+}
+
+else if (@RenderType.Equals("footer"))
+{
+	if (FooterTemplate != null)
+	{
+		@FooterTemplate(Item)
+	}
+}
+
+@functions {
+
+	[CascadingParameter(Name = "RenderType")]
+	public string RenderType { get; set; }
+
+	[CascadingParameter(Name = "Item")]
+	public TItem Item { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
+	public string Property { get; set; }
+
+	[Parameter]
+	public RenderFragment<TItem> RowTemplate { get; set; }
+
+	[Parameter]
+	public RenderFragment<TItem> FooterTemplate { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter] public Action<object>? OnClick { get; set; }
+
+}

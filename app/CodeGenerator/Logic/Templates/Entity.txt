@@ -1,0 +1,11 @@
+using KudoCode.Contracts.Api;
+
+namespace KudoCode.<%service%>Service.Domain
+{
+    public class <%entity%> : IEntity
+    {
+        public <%entity%>()
+        {
+        }
+    }
+}

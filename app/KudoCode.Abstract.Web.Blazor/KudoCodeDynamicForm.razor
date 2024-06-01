@@ -1,0 +1,142 @@
+﻿@page "/Test/{Request}/{Parameters}"
+
+@using KudoCode.Abstract.Web.Blazor
+@using KudoCode.Abstract.Web.Blazor
+@using KudoCode.Contracts
+@using Microsoft.AspNetCore.Components.Forms
+@using KudoCode.Abstract.Web.Blazor
+@using AutoMapper
+@using KudoCode.Abstract.Web.Blazor
+@using KudoCode.Helpers
+@using Newtonsoft.Json
+
+@inject KudoCode.Contracts.Web.ApiPostController ApiPostController;
+@inject IMapper Mapper;
+
+@inherits KudoCodePageComponent
+
+<div class="card-text">
+
+	<EditForm Model="Model"
+			  OnValidSubmit="HandleValidSubmit"
+			  OnInvalidSubmit="HandleInValidSubmit">
+
+		<div class="row">
+			<div class="col">
+				<div class="row">
+					<div class="col-3">
+					</div>
+					<div class="col-3">
+						<KudoCodeButton value="delete" Class="btn btn-danger" Click="(() => {})" />
+					</div>
+					<div class="col-3">
+						<KudoCodeButton value="new" Class="btn-secondary" Click="(() => {Clear();})" />
+					</div>
+					<div class="col-3">
+						<button style="width: 100%" class="btn btn-primary check-circle " type="submit">save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col">
+				<KudoCode.Abstract.Web.Blazor.Validation.ObjectGraphDataAnnotationsValidator />
+				<RenderFormElements TableConfig="@TableConfig" FormLayoutOptions="@OptionsForForm"></RenderFormElements>
+			</div>
+		</div>
+	</EditForm>
+	<br />
+</div>
+
+@code{
+	[Inject] protected IConvertToObject _convertToObject { get; set; }
+	[Inject] protected IListTableConfigStore _listTableConfigStore { get; set; }
+	[Parameter] public Type TItem { get; set; }
+	[Parameter] public string Service { get; set; } = "";
+	[Parameter] public Action<object> OnSaveComplete { get; set; }
+	[Parameter] public Action<object, object>? OnGetComplete { get; set; }
+	[Parameter] public Func<object, object, object>? OnGetComplete_f { get; set; }
+	[Parameter] public Action<object>? OnSaveClickStart { get; set; }
+	[Parameter] public Action? ClearSelected { get; set; }
+	[Parameter] public object In { get; set; }
+	[Parameter] public object Out { get; set; }
+	[Parameter] public TableConfig TableConfig { get; set; }
+	[Parameter] public object SelectedItem { get; set; }
+
+	private object Model { get; set; }
+
+	private VxFormLayoutOptionsAnnotated Options = new VxFormLayoutOptionsAnnotated();
+	private VxFormLayoutOptions OptionsForForm = new VxFormLayoutOptions();
+
+	public void Clear()
+	{
+		Model = _convertToObject.NewObject(TableConfig.Id, TItem);
+		SelectedItem = null;
+		if (ClearSelected != null)
+			ClearSelected();
+	}
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (SelectedItem == null)
+		{
+			Model = _convertToObject.NewObject(TableConfig.Id, TItem);
+			return;
+		}
+
+		await ApiPostController
+	.CreateAsync<GetDynamicRequest, GetDynamicResponse>
+		()
+		.SetOnSuccess((rsp) =>
+		{
+			Model = (object)_convertToObject.ToObject(rsp.Result.Data, TableConfig.Id, TItem);
+		})
+		.SetOnComplete((rsp) =>
+		{
+			ToastMessage(rsp.Messages.ToArray());
+			if (OnGetComplete != null)
+				OnGetComplete(Model, rsp);
+		})
+	.PostAsync(new GetDynamicRequest() { Id = ((dynamic)SelectedItem).Id }, Service).ConfigureAwait(false);
+
+	}
+
+	private async Task HandleValidSubmit(EditContext context)
+	{
+		int? DynamicId = null;
+		if (In != null)
+			DynamicId = ((dynamic)In).DynamicId;
+
+		if (OnSaveClickStart != null)
+			OnSaveClickStart(Model);
+
+		if (context.Model == null) return;
+
+		//SAVE
+		await ApiPostController
+			.CreateAsync<SaveDynamicRequest, SaveDynamicResponse>()
+			.SetOnSuccess((rsp) =>
+			{
+				if (OnSaveComplete != null)
+					OnSaveComplete(_convertToObject.ToObject(rsp.Result.Data, TableConfig.Id, TItem));
+				Clear();
+				Messages.Add(new MessageDto("", "Saved", MessageDtoType.Success));
+
+			})
+			.SetOnComplete((rsp) =>
+			{
+				Messages.AddRange(rsp.Messages);
+			})
+			.PostAsync(new SaveDynamicRequest() { Data = JsonConvert.SerializeObject(context.Model), TableConfigId = TableConfig.Id, DynamicId = DynamicId }, Service);
+	}
+
+	private void HandleInValidSubmit(EditContext context)
+	{
+
+	}
+}

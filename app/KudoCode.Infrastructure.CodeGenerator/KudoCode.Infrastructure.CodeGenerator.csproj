@@ -1,0 +1,139 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+   <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Logic\Templates\ApiController.txt" />
+      <None Remove="Logic\Templates\AuthorizationHandler.txt" />
+      <None Remove="Logic\Templates\AutoMapper.txt" />
+      <None Remove="Logic\Templates\CommandHandler.txt" />
+      <None Remove="Logic\Templates\CommandWebHandler.txt" />
+      <None Remove="Logic\Templates\Connector.txt" />
+      <None Remove="Logic\Templates\DeleteWH.txt" />
+      <None Remove="Logic\Templates\DeleteWorkerUnitTest.txt" />
+      <None Remove="Logic\Templates\EditCshtml.txt" />
+      <None Remove="Logic\Templates\Entity.txt" />
+      <None Remove="Logic\Templates\GenericTable.txt" />
+      <None Remove="Logic\Templates\GetWH.txt" />
+      <None Remove="Logic\Templates\GetWorkerUnitTest.txt" />
+      <None Remove="Logic\Templates\HandlerTest.txt" />
+      <None Remove="Logic\Templates\ListResponse.txt" />
+      <None Remove="Logic\Templates\ListWH.txt" />
+      <None Remove="Logic\Templates\ListWorkerUnitTest.txt" />
+      <None Remove="Logic\Templates\QueryHandler.txt" />
+      <None Remove="Logic\Templates\QueryWebHandler.txt" />
+      <None Remove="Logic\Templates\Request.txt" />
+      <None Remove="Logic\Templates\Response.txt" />
+      <None Remove="Logic\Templates\SaveWH.txt" />
+      <None Remove="Logic\Templates\SaveWorkerUnitTest.txt" />
+      <None Remove="Logic\Templates\ServiceJs.txt" />
+      <None Remove="Logic\Templates\ValidationUnitTest.txt" />
+      <None Remove="Logic\Templates\VH.txt" />
+      <None Remove="Logic\Templates\ViewModel.txt" />
+      <None Remove="Logic\Templates\WebController.txt" />
+      <None Remove="Logic\Templates\WH.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="Logic\Templates\ApiController.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\AuthorizationHandler.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\AutoMapper.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\CommandHandler.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\CommandWebHandler.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\Connector.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\DeleteWH.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\DeleteWorkerUnitTest.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\EditCshtml.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\Entity.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\GenericTable.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\WH.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\GetWH.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\GetWorkerUnitTest.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\HandlerTest.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\ListResponse.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\ListWH.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\ListWorkerUnitTest.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\QueryHandler.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\QueryWebHandler.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\Request.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\Response.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\SaveWH.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\SaveWorkerUnitTest.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\ServiceJs.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\ValidationUnitTest.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\VH.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\ViewModel.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="Logic\Templates\WebController.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="8.0.0" />
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+      <ProjectReference Include="..\KudoCode.Contracts.Api\KudoCode.Contracts.Api.csproj" />
+    </ItemGroup>
+
+</Project>

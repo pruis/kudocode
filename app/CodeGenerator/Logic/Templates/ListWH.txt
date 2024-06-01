@@ -1,0 +1,35 @@
+using Autofac;
+using AutoMapper;
+using KudoCode.Contracts.Api;
+using KudoCode.LogicLayer.Dtos;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace KudoCode.BudgetService.Domain
+{
+    public class List<%entity%>RequestWorkerHandler : QueryHandler<List<%entity%>Request,
+		List<<%entity%>>, List<%entity%>Response>
+	{
+		public List<%entity%>RequestWorkerHandler(
+			IMapper mapper,
+			IReadOnlyRepository repository,
+			ILifetimeScope scope,
+			IWorkerContext<List<%entity%>Response> context)
+			: base(mapper, repository, scope, context)
+		{
+		}
+
+		protected override void GetEntity()
+		{
+			Entity = Repository.Get<<%entity%>>(null, null).ToList();
+		}
+
+		protected override void Execute()
+		{
+
+			Context.Result = new List<%entity%>Response()
+			{ List = Mapper.Map<List<<%entity%>Response>>(Entity) };
+
+		}
+	}
+}

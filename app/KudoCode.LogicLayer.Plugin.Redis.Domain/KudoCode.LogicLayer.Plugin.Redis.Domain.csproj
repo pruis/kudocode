@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\KudoCode.Abstract.Application\KudoCode.Abstract.Application.csproj" />
+      <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+      <ProjectReference Include="..\KudoCode.Contracts.Api\KudoCode.Contracts.Api.csproj" />
+      <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Infrastructure\KudoCode.LogicLayer.Plugin.Redis.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Autofac" Version="8.0.0" />
+      <PackageReference Include="ServiceStack.Redis.Core" Version="8.2.2" />
+    </ItemGroup>
+
+</Project>

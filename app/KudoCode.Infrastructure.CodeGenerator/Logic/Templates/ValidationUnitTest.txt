@@ -1,0 +1,57 @@
+using Autofac;
+using KudoCode.Contracts;
+using KudoCode.Contracts.Api;
+using KudoCode.LogicLayer.Dtos;
+using KudoCode.Test.Unit;
+using KudoCode.Test.Unit.InMemoryDataBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+
+
+namespace KudoCode.Tests.<%service%>Service.<%entity%>.Validation
+{
+	[TestClass]
+	public class <%request%><%entity%>VUnitTest : UnitTestBase
+	{
+		private <%request%><%entity%>Request _request;
+		private IValidationContext<<%response%>> _getResponse ;
+
+		public <%request%><%entity%>VUnitTest()
+		{
+		}
+
+		[TestMethod]
+		public void <%request%><%entity%>RequestValidation()
+		{
+			base.Run(
+				"<%request%><%entity%>Request Validation",
+				"",
+				"",
+				"");
+		}
+
+		protected override void Seed()
+		{
+            SeedDataBase.InitializeDataBase();
+		}
+
+		protected override void Given()
+		{
+			_request = new <%request%><%entity%>Request() { };
+		}
+
+		protected override void When()
+		{
+			_getResponse  = ApplicationContext
+				.Container
+				.Resolve<IHandler<<%request%><%entity%>Request, IValidationContext<<%response%>>>>()
+				.Handle(_request);
+		}
+
+		protected override void Then()
+		{
+			Assert.IsFalse(_getResponse .Messages.Any(a =>
+				a.Type == MessageDtoType.Error));
+		}
+	}
+}

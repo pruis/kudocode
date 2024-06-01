@@ -1,0 +1,63 @@
+using Autofac;
+using KudoCode.Contracts;
+using KudoCode.Contracts.Api;
+using KudoCode.LogicLayer.Dtos;
+using KudoCode.Test.Unit;
+using KudoCode.Test.Unit.InMemoryDataBase;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
+
+namespace KudoCode.Tests.<%service%>Service.<%entity%>.Worker
+{
+    [TestClass]
+    public class Delete<%entity%>WUnitTest : UnitTestBase
+    {
+        private Delete<%entity%>Request _request;
+        private IWorkerContext<Delete<%entity%>Response> _getResponse;
+        private int _id;
+
+        public Delete<%entity%>WUnitTest()
+        {
+        }
+
+        [TestMethod]
+        public void Delete<%entity%>Worker()
+        {
+            base.Run(
+                "Delete<%entity%> Worker",
+                "",
+                "",
+                "");
+        }
+
+        protected override void Seed()
+        {
+            SeedDataBase.InitializeDataBase();
+            var get<%entity%>Response = ApplicationContext
+                .Container
+                .Resolve<IHandler<Save<%entity%>Request, IWorkerContext<Save<%entity%>Response>>>()
+                .Handle(new Save<%entity%>Request() { });
+
+            _id = get<%entity%>Response.Result.Id;
+        }
+
+        protected override void Given()
+        {
+            _request = new Delete<%entity%>Request() { Id = _id };
+        }
+
+        protected override void When()
+        {
+            _getResponse = ApplicationContext
+                .Container
+                .Resolve<IHandler<Delete<%entity%>Request, IWorkerContext<Delete<%entity%>Response>>>()
+                .Handle(_request);
+        }
+
+        protected override void Then()
+        {
+            Assert.IsFalse(_getResponse.Messages.Any(a =>
+               a.Type == MessageDtoType.Error));
+        }
+    }
+}

@@ -1,0 +1,94 @@
+﻿body {
+}
+
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Carousel */
+.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+/* Make .svg files in the carousel display properly in older browsers */
+.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}
+
+/* QR code generator */
+#qrCode {
+    margin: 15px;
+}
+
+/* Hide/rearrange for smaller screens */
+@media screen and (max-width: 767px) {
+    /* Hide captions */
+    .carousel-caption {
+        display: none;
+    }
+}
+/******************/
+
+
+H1 {
+	padding: 10px;
+	margin: 0px;
+}
+
+/**************/
+
+
+#sidebar-wrapper {
+	margin-left: -70px;
+	left: 70px;
+	width: 150px;
+	background: #222;
+	position: fixed;
+	height: 100%;
+	z-index: 10000;
+}
+
+.sidebar-nav {
+	display: block;
+	float: left;
+	width: 150px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+
+
+.sidebar-nav li {
+	line-height: 35px;
+	text-indent: 20px;
+}
+
+	.sidebar-nav li a {
+		color: #999999;
+		display: block;
+		text-decoration: none;
+	}
+
+		.sidebar-nav li a:hover {
+			color: lime;
+			background: rgba(255,255,255,0.2);
+			text-decoration: none;
+		}
+
+		.sidebar-nav li a:active,
+		.sidebar-nav li a:focus {
+			text-decoration: none;
+		}
+
+.sidebar-nav > .sidebar-brand {
+	height: 65px;
+	line-height: 60px;
+	font-size: 18px;
+}
+
+

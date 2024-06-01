@@ -1,0 +1,16 @@
+using AutoMapper;
+using KudoCode.LogicLayer.Dtos;
+
+namespace KudoCode.BudgetService.Domain
+{
+    public class <%entity%>AutoMap : Profile
+    {
+        public <%entity%>AutoMap()
+        {
+            CreateMap<Save<%entity%>Request, <%entity%>>();
+            CreateMap<<%entity%>, Save<%entity%>Response>();
+            CreateMap<<%entity%>, Get<%entity%>Response>();
+            CreateMap<<%entity%>, <%entity%>Response>();
+        }
+    }
+}

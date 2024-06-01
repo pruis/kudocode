@@ -1,0 +1,10 @@
+using KudoCode.Contracts;
+
+namespace KudoCode.LogicLayer.Dtos
+{
+    public class <%entity%>ViewModel
+    {
+        [VxIgnore]
+        public int Id { get; set; }
+    }
+ }

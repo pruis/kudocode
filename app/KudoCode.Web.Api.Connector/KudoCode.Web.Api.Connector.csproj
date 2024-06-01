@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Portfolios\**" />
+    <EmbeddedResource Remove="Portfolios\**" />
+    <None Remove="Portfolios\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Helpers\KudoCode.Helpers.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Dtos\KudoCode.LogicLayer.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.Contracts.Api\KudoCode.Contracts.Api.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.EntityAudit.Dtos\KudoCode.LogicLayer.Plugin.EntityAudit.Dtos.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Gen" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,10 @@
+﻿<div data-bind="if: (Messages().length > 0)">
+    <div class="alert alert-success" role="alert">
+        <div data-bind="foreach:Messages">
+            <div class="row">
+                <div class="col-1" data-bind="text: Key"></div>
+                <div class="col" data-bind="text: Message"></div>
+            </div>
+        </div>
+    </div>
+</div>

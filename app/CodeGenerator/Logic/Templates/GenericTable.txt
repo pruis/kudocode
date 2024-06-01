@@ -1,0 +1,47 @@
+                        <KudoCodeGenericTable Service="<%service%>"
+                                              TListRequest=List<%entity%>Request
+                                              TListResponse="List<%entity%>Response"
+                                              TResponse="<%entity%>Response"
+                                              TGetRequest="Get<%entity%>Request"
+                                              TEditModel="<%entity%>ViewModel"
+                                              TGetResponse="Get<%entity%>Response"
+                                              TSaveRequest="Save<%entity%>Request"
+                                              TSaveResponse="Save<%entity%>Response"
+                                              TDeleteRequest="Delete<%entity%>Request"
+                                              TDeleteResponse="Delete<%entity%>Response"
+                                              OnClearComplete=@(async (vm)=>
+                                              {
+                                              await InvokeAsync(StateHasChanged);
+                                              })
+                                              OnGetComplete=@(async (vm, rsp) =>{
+                                              await InvokeAsync(StateHasChanged);
+                                              })
+                                              OnSaveComplete=@(async (model, result) =>{
+                                              await InvokeAsync(StateHasChanged);
+                                              })>
+                        </KudoCodeGenericTable>
+
+
+    #region <%entity%>
+
+            //(On Delete) Map selected Item to be deleted 
+            CreateMap<<%entity%>Response, Delete<%entity%>Request>();
+
+            //(On Edit/ On Init)
+            CreateMap<<%entity%>Response, Get<%entity%>Request>();
+            //(On Edit click) Map Selected Item to OUT object
+            CreateMap<<%entity%>Response, <%entity%>Bind>().ForMember(d => d.<%entity%>Id, o => o.MapFrom(s => s.Id));
+            //(On Edit Click) Map the Get Response to the EditModel
+            CreateMap<Get<%entity%>Response, <%entity%>ViewModel>();
+
+            //(On Save Success) Map ViewModel to Save Request
+            CreateMap<<%entity%>ViewModel, Save<%entity%>Request>();
+            //(On Save Success) Map any other new properties to the selected item , new Id created by API
+            CreateMap<Save<%entity%>Response, <%entity%>ViewModel>();
+            //(On Save Success) Map any other new properties to the listed Item, properties changed by api
+            CreateMap<Save<%entity%>Response, <%entity%>Response>();
+            //(On Save Success) Map selected Item back to Listed Item, properties changed by the user
+            CreateMap<<%entity%>ViewModel, <%entity%>Response>();
+            //(On Save Success) update references external 
+            //CreateMap<Save<%entity%>Response, <%entity%>Bind>().ForMember(d => d.<%entity%>Id, o => o.MapFrom(s => s.Id));
+    #endregion

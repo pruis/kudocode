@@ -1,0 +1,9 @@
+using KudoCode.Contracts;
+
+
+namespace KudoCode.LogicLayer.Dtos
+{
+    public class <%request%><%entity%>Request : IApiRequestDto
+    {
+    }
+}

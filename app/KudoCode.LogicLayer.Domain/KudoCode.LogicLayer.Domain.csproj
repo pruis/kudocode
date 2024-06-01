@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Logic\FolderTemplate\**" />
+    <Compile Remove="Logic\PortfolioAccounts\**" />
+    <EmbeddedResource Remove="Logic\FolderTemplate\**" />
+    <EmbeddedResource Remove="Logic\PortfolioAccounts\**" />
+    <None Remove="Logic\FolderTemplate\**" />
+    <None Remove="Logic\PortfolioAccounts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Pruis\.nuget\packages\dotnetcore.npoi\1.2.3\contentFiles\any\netstandard2.0\NOTICE.TXT" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
+    <PackageReference Include="FluentValidation" Version="11.9.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="SendGrid.Core" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\KudoCode.Abstract.Application\KudoCode.Abstract.Application.csproj" />
+    <ProjectReference Include="..\KudoCode.Abstract.Persistence.EntityFramework\KudoCode.Abstract.Persistence.EntityFramework.csproj" />
+    <ProjectReference Include="..\KudoCode.Infrastructure.AutoFac.Application\KudoCode.Infrastructure.AutoFac.Application.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Dtos\KudoCode.LogicLayer.Dtos.csproj" />
+    <ProjectReference Include="..\KudoCode.Abstract.Application\KudoCode.Abstract.Application.csproj" />
+    <ProjectReference Include="..\KudoCode.Contracts\KudoCode.Contracts.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.EntityAudit.Domain\KudoCode.LogicLayer.Plugin.EntityAudit.Domain.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Domain\KudoCode.LogicLayer.Plugin.Redis.Domain.csproj" />
+    <ProjectReference Include="..\KudoCode.LogicLayer.Plugin.Redis.Infrastructure\KudoCode.LogicLayer.Plugin.Redis.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
